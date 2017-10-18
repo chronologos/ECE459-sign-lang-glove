@@ -1,0 +1,27 @@
+#include "mbed.h"                    
+
+DigitalOut myled(LED1);
+
+InterruptIn mySwitch(p8);
+
+void InterruptHandler(){
+	if (mySwitch==1){
+			myled=1;
+		  wait(0.03);
+		}
+		else {
+			myled=0;
+			wait(0.03);
+		}
+}
+
+int main()
+{
+	myled=0;
+	mySwitch.rise(&InterruptHandler);
+	mySwitch.fall(&InterruptHandler);
+	while(1)
+	{
+		
+	}
+}
