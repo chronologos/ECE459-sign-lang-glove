@@ -1,41 +1,29 @@
 #include "mbed.h"                    
-//#include <nrk.h>
 #include <include.h>
 #include <ulib.h>
 #include <stdio.h>
 #include <hal.h>
 #include <stdint.h>
 #include "seven_segment.h"
-//#include <lpc17xx.h>
+#include "flex_sensor.h"
 
-//#include <nrk_error.h>
-//#include <nrk_timer.h>
-//#include <nrk_stack_check.h>
-//#include <nrk_stats.h>
+#define FLEX_ENABLE
 
-
-// Static stack for Task1
-//NRK_STK Stack1[NRK_APP_STACKSIZE];
-//// Task1 declaration
-//nrk_task_type TaskOne;
-
-//void Task1(void);
-//// Function creates taskset
-//void nrk_create_taskset();
-
-// You do not need to modify this function
-//struct __FILE { int handle; };
-
-AnalogIn adcin(p15);
-DigitalOut ssEn(p20);
-//DigitalOut ssOut(p5,p6,p7,p8,p9,p10,p11,p12);
+AnalogIn adcin1(p15), adcin2(p16), adcin3(p17), adcin4(p18), adcin5(p19), adcin6(p20);
+InterruptIn toggleButton(p14);
+DigitalOut led1(LED1), led2(LED2), led3(LED3);
+DigitalOut ssEn(p13);
 DigitalOut red(p5), orange(p6), yellow(p7), green(p8), blue(p9), purple(p10), gray(p11), white(p12);
 Serial pc(USBTX,USBRX); //tx, rx
+Serial bt(p28, p27);
+Sensing::FlexSensorReader flex_reader;
+Sensing::SensorReading sensor_reading();
 
 DisplayState ssOut;
-int max = 2500;
-int min = 1250;
-int divSize = (max-min)/4;
+int max_scale = 2500;
+int min_scale = 1250;
+int displaying = 1; // TODO(iantay) shows 1 to 6 // TODO(iantay) remove
+int divSize = (max_scale-min_scale)/4;
 
 void update(DisplayState* state) {
     red = state->g;
@@ -48,10 +36,23 @@ void update(DisplayState* state) {
     white = state->dp;
 }
 
-void config()
+void config() // TODO(iantay) remove
 {	
 	pc.baud(115200);
-	LPC_ADC->ADCR|=0x00000001; //set to run on channel 0
+	// Use global displaying var to choose adc channel
+	if (displaying == 1){
+		LPC_ADC->ADCR=1u; //set to run on channel 0
+	} else if (displaying == 2) {
+		LPC_ADC->ADCR=2u;
+	} else if (displaying == 3) {
+		LPC_ADC->ADCR=4u;
+	} else if (displaying == 4) {
+		LPC_ADC->ADCR=8u;
+	} else if (displaying == 5) {
+		LPC_ADC->ADCR=16u;
+	} else if (displaying == 6) {
+		LPC_ADC->ADCR=32u;
+	}
 	LPC_ADC->ADCR|=0x00000900; //set clock divisor to have divide by x+1 (from 100MHz)
 	LPC_ADC->ADCR|=0x00200000; //set to power the ADC
 	LPC_SC->PCONP |= (1<<12);
@@ -59,84 +60,89 @@ void config()
 	ssEn=1;
 }
 
-void startConversion()
-{
+void startConversion() {
 	LPC_ADC->ADCR|=0x01000000; //set to startConversion
 }
 
-void endConversion()
-{
+void endConversion() {
 	LPC_ADC->ADCR&=0xfeffffff; //set to end conversion
 }
 
-uint16_t extractData()
-{
+uint16_t extractData() {
 	return (LPC_ADC->ADGDR>>4)&0x00000fff;
 }
 
 
-void display(uint16_t input)
-{
-	if (input>(max-divSize)){
+void display(uint16_t input) {
+	if (input>(max_scale-divSize)){
 		set('3', &ssOut);
-		update(&ssOut);
-		return;
 	}
-	if (input>(max-divSize*2)){
+	if (input>(max_scale-divSize*2)){
 		set('2', &ssOut);
-		update(&ssOut);
-		return;
 	}
-	if (input>(min+divSize)){
+	if (input>(min_scale+divSize)){
 		set('1', &ssOut);
-		update(&ssOut);
-		return;
 	}
 	else{
 		set('0', &ssOut);
-		update(&ssOut);
-		return;
 	}
+	update(&ssOut);
+	led1 = (displaying & 1u);
+	led2 = (displaying & 2u);
+	led3 = (displaying & 4u);
 }
 
+void toggleHandler(){ // TODO(iantay) remove
+	if (displaying > 5){
+		displaying = 1;
+	} else {
+		displaying += 1;
+	}
+	config(); // refresh the adc channel
+}
 
-// Main function
-int main(void)
-{
-	uint16_t output =0;
+int old(void){ // TODO(iantay) remove
 	config();
-	
-	while(1)
-	{
-		pc.printf("Hello world\n");
-		
+	toggleButton.rise(&toggleHandler);
+	while(1) {
+		wait_ms(1);
 		startConversion();
 		while((LPC_ADC->ADGDR&31u)==0);
 		wait_ms(1);
 		endConversion();
 		display(extractData());
 		pc.printf("%d\n", extractData());
-		//LPC_ADC->ADGDR &= 0x7fffffff;
-
 	}
+}
+// Main function
+int main(void) {
+	pc.baud(115200);
+	bt.baud(9600);
+	led1 = 1;
+	pc.printf("Hello world\n");
+	
+	#ifdef FLEX_ENABLE
+	ssEn=1;
+	Sensing::FlexSensorReader flexReader;
+	flexReader.ADCSetup();
+	Sensing::SensorReading sensorReading;
+	while(1) {
+		wait_ms(100);
+		flexReader.Poll(&sensorReading);
+		string res = flexReader.Convert(&sensorReading);
+		pc.printf("%s\n", res.c_str());
+		if (res.size() != 0){
+			set(res.c_str()[0], &ssOut);
+			update(&ssOut);
+			wait_ms(1
+			00);
+
+			bt.printf("%c",res.c_str()[0]);
+			
+			
+		}
+	}
+
+	#endif
 	return 0;
 }
-
-// Function creates taskset
-//void nrk_create_taskset()
-//{
-//	
-//    nrk_task_set_entry_function( &TaskOne, Task1);
-//    nrk_task_set_stk( &TaskOne, Stack1, NRK_APP_STACKSIZE);
-//    TaskOne.prio = 2;
-//    TaskOne.FirstActivation = TRUE;
-//    TaskOne.Type = BASIC_TASK;
-//    TaskOne.SchType = PREEMPTIVE;
-//    TaskOne.period.secs = 0;
-//    TaskOne.period.nano_secs = 60*NANOS_PER_MS;
-//    TaskOne.cpu_reserve.secs = 0;
-//    TaskOne.cpu_reserve.nano_secs = 0;
-//    TaskOne.offset.secs = 0;
-//    TaskOne.offset.nano_secs= 0;
-//    nrk_activate_task (&TaskOne);
-//}

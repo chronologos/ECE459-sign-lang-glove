@@ -1,5 +1,6 @@
 --cpu Cortex-M3
 ".\objects\main.o"
+".\objects\flex_sensor.o"
 ".\objects\adc_driver.o"
 ".\objects\ff_basic_sensor.o"
 ".\objects\nrk_cpu.o"

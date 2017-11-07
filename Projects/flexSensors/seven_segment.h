@@ -1,4 +1,7 @@
-typedef struct {
+#ifndef SEVENSEG_H
+#define SEVENSEG_H
+
+typedef struct DisplayState {
     int a;
     int b;
     int c;
@@ -10,6 +13,7 @@ typedef struct {
 } DisplayState;
 
 void set(char x, DisplayState* ds) {
+	
     switch (x) {
         case '0':
             ds->a = 1;
@@ -155,5 +159,6 @@ void set(char x, DisplayState* ds) {
             break;
     }
 }
+#endif /* SEVENSEG_H */
 
 

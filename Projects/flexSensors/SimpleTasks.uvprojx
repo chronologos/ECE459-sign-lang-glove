@@ -388,6 +388,11 @@
               <FileType>8</FileType>
               <FilePath>.\main.cpp</FilePath>
             </File>
+            <File>
+              <FileName>flex_sensor.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\flex_sensor.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
