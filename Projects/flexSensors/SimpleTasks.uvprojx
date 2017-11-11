@@ -393,6 +393,26 @@
               <FileType>8</FileType>
               <FilePath>.\flex_sensor.cpp</FilePath>
             </File>
+            <File>
+              <FileName>I2Cdev.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\LSM9DS0\I2Cdev.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>I2Cdev.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LSM9DS0\I2Cdev.h</FilePath>
+            </File>
+            <File>
+              <FileName>LSM9DS0.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\LSM9DS0\LSM9DS0.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>LSM9DS0.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LSM9DS0\LSM9DS0.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -1,7 +1,4 @@
-#include <include.h>
-#include <ulib.h>
 #include <stdio.h>
-#include <hal.h>
 #include <stdint.h>
 #include "flex_sensor.h"
 #include "mbed.h"                    
