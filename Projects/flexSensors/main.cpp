@@ -134,8 +134,7 @@ int main(void) {
 		if (res.size() != 0){
 			set(res.c_str()[0], &ssOut);
 			update(&ssOut);
-			wait_ms(1
-			00);
+			wait_ms(100);
 
 			bt.printf("%c",res.c_str()[0]);
 			
