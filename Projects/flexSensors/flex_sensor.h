@@ -15,18 +15,19 @@ namespace Sensing {
 //const int DIV_SIZE = (MAX_SCALE-MIN_SCALE)/NUM_STATES;
 
 typedef struct SensorReading {
-	uint8_t thumb;
-	uint8_t finger1;
-	uint8_t finger2;
-	uint8_t finger3;
-	uint8_t finger4;
-//	int palm;
+	uint16_t thumb;
+	uint16_t finger1;
+	uint16_t finger2;
+	uint16_t finger3;
+	uint16_t finger4;
+  uint16_t palm;
 	std::string key;
-	SensorReading(int t, int f1, int f2, int f3, int f4, std::string k) : thumb(t), finger1(f1), finger2(f2), finger3(f3), finger4(f4), key(k){}
-	SensorReading() {}
+	SensorReading(uint16_t t, uint16_t f1, uint16_t f2, uint16_t f3, uint16_t f4, uint16_t p, std::string k) : thumb(t), finger1(f1), finger2(f2), finger3(f3), finger4(f4), palm(p), key(k){}
+	SensorReading(uint16_t t, uint16_t f1, uint16_t f2, uint16_t f3, uint16_t f4, std::string k) : thumb(t), finger1(f1), finger2(f2), finger3(f3), finger4(f4), palm(0), key(k){}
+  SensorReading() {}
 	
 	int distance_from_key (const SensorReading &o) const{
-		return min_dist(thumb,o.thumb) + min_dist(finger1,o.finger1) + min_dist(finger2,o.finger2) + min_dist(finger3,o.finger3) + min_dist(finger4,o.finger4);
+		return min_dist(thumb,o.thumb) + min_dist(finger1,o.finger1) + min_dist(finger2,o.finger2) + min_dist(finger3,o.finger3) + min_dist(finger4,o.finger4) + min_dist(palm,o.palm);
 	}
 
 	bool operator<(const SensorReading &o) const{
@@ -53,7 +54,7 @@ class FlexSensorReader {
 	
 		// Polls flex sensors for one reading.
 		int Poll(struct SensorReading* flex_reading);
-		void ADCSetup() const;
+		void ADCSetup(int i) const;
 		
 	private:
 	  std::vector<SensorReading> keys;
