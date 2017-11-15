@@ -127,15 +127,15 @@ int main(void) {
 	flexReader.ADCSetup();
 	Sensing::SensorReading sensorReading;
 	while(1) {
-		wait_ms(100);
+		wait_ms(1000);
 		flexReader.Poll(&sensorReading);
 		string res = flexReader.Convert(&sensorReading);
 		pc.printf("%s\n", res.c_str());
 		if (res.size() != 0){
-			set(res.c_str()[0], &ssOut);
-			update(&ssOut);
+			//set(res.c_str()[0], &ssOut);
+			//update(&ssOut);
 			wait_ms(100);
-
+			pc.printf("%c",res.c_str()[0]);
 			bt.printf("%c",res.c_str()[0]);
 			
 			
