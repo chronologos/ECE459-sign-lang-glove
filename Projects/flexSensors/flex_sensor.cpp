@@ -6,15 +6,15 @@
 namespace Sensing {
 	
 	FlexSensorReader::FlexSensorReader() {
-		keys.push_back(SensorReading(1,2,0,0,0, "1"));
-		keys.push_back(SensorReading(1,2,2,0,0, "2"));
-		keys.push_back(SensorReading(2,2,2,0,0, "3"));
-		keys.push_back(SensorReading(0,2,2,2,2, "4"));
-	  keys.push_back(SensorReading(2,2,2,2,2, "5"));
-		keys.push_back(SensorReading(1,2,2,2,0, "6"));
-		keys.push_back(SensorReading(1,2,2,0,2, "7"));
-		keys.push_back(SensorReading(1,2,0,2,2, "8"));
-		keys.push_back(SensorReading(1,0,2,2,2, "9"));
+		keys.push_back(SensorReading(1,2,0,0,0,0, "1"));
+		keys.push_back(SensorReading(1,2,2,0,0,0, "2"));
+		keys.push_back(SensorReading(2,2,2,0,0,0, "3"));
+		keys.push_back(SensorReading(0,2,2,2,2,0, "4"));
+	  keys.push_back(SensorReading(2,2,2,2,2,0, "5"));
+		keys.push_back(SensorReading(1,2,2,2,0,0, "6"));
+		keys.push_back(SensorReading(1,2,2,0,2,0, "7"));
+		keys.push_back(SensorReading(1,2,0,2,2,0, "8"));
+		keys.push_back(SensorReading(1,0,2,2,2,0, "9"));
 		
 //		for (int i = 0; i < NUM_STATES; ++i) {
 //			scale.push_back(MIN_SCALE+(i+1)*DIV_SIZE);
@@ -34,11 +34,11 @@ namespace Sensing {
 		std::string best_key = "-";
 		int min_score = INFINITY;
 		int temp_score =  0;
-		for (SensorReading i : keys){
-			temp_score = i.distance_from_key(*flex_reading);
+		for (int i=0; i<keys.size() ; i++){
+			temp_score = keys[i].distance_from_key(*flex_reading);
 			if (min_score < temp_score){
 				min_score = temp_score;
-				best_key = i.key;
+				best_key = keys[i].key;
 			}
 		}
 		return best_key;
@@ -47,8 +47,8 @@ namespace Sensing {
 	}
 	
 	int FlexSensorReader::Poll(struct SensorReading* flex_reading){
-		//uint32_t adc_channels[6] = {1u,2u,4u,8u,16u,32u};
-		uint32_t adc_channels[5] = {1u,2u,4u,8u,16u};
+		uint32_t adc_channels[6] = {1u,2u,4u,8u,16u,32u};
+		//uint32_t adc_channels[5] = {1u,2u,4u,8u,16u};
 		for (int i = 0; i < sizeof(adc_channels); ++i){
 			LPC_ADC->ADCR=adc_channels[i]; //set to run on channel x
 			ADCSetup();
@@ -73,8 +73,9 @@ namespace Sensing {
 			} else if (i==4){
 				flex_reading->finger4 = raw_data;
 				printf("Pinkie: raw_data: %d\n", raw_data);
-//			} else if (i==5){
-//				flex_reading->palm = state;
+			} else if (i==5){
+				flex_reading->palm = raw_data;
+				printf("Palm: raw_data: %d\n", raw_data);
 			} else {
 				return 1;
 			}

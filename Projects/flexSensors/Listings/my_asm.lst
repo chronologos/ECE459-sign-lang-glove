@@ -165,11 +165,11 @@ ARM Macro Assembler    Page 3
               E000ED04 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
-ork --depend=.\objects\my_asm.d -o.\objects\my_asm.o -IC:\Users\myk3\Desktop\fi
-nalproject\Projects\flexSensors\RTE -IC:\Keil_v5\ARM\PACK\Keil\LPC1700_DFP\2.2.
-0\Device\Include -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__UVISION_VERSION 
-SETA 520" --predefine="LPC175x_6x SETA 1" --list=.\listings\my_asm.lst ..\..\mr
-k\my_asm.s
+ork --depend=.\objects\my_asm.d -o.\objects\my_asm.o -IC:\Users\myk3\Desktop\ex
+tra\Projects\flexSensors\RTE -IC:\Keil_v5\ARM\PACK\Keil\LPC1700_DFP\2.2.0\Devic
+e\Include -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__UVISION_VERSION SETA 52
+0" --predefine="LPC175x_6x SETA 1" --list=.\listings\my_asm.lst ..\..\mrk\my_as
+m.s
 
 
 
