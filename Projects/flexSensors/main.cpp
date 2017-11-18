@@ -24,6 +24,39 @@ int max_scale = 2500;
 int min_scale = 1250;
 int displaying = 1; // TODO(iantay) shows 1 to 6 // TODO(iantay) remove
 int divSize = (max_scale-min_scale)/4;
+std::vector<string> consensus_queue;
+const int CONSENSUS_N = 10;
+
+/* Check if last CONSENSUS_N readings constitute a consensus on what character was 
+ * read. IMPT: Clears vector if no consensus. 
+ */ 
+ 
+void emptyQueue(){
+	while (consensus_queue.size() > 0){
+		consensus_queue.pop_back();
+	}
+}
+
+bool hasConsensus(){
+	if (consensus_queue.size() < CONSENSUS_N){
+		return false;
+	}
+	string candidate = consensus_queue[0];
+	for (int i =1; i<consensus_queue.size(); ++i){
+		if (consensus_queue[i] != candidate){
+			emptyQueue();
+			return false;
+		}
+	}
+	return true;
+}
+
+/* Return consensus value and clears vector, only safe to call if hasConsensus! */
+std::string getConsensus(){
+		string consensus = consensus_queue[0];
+		emptyQueue();
+		return consensus;
+}
 
 void update(DisplayState* state) {
     red = state->g;
@@ -129,16 +162,12 @@ int main(void) {
 	while(1) {
 		wait_ms(1000);
 		flexReader.Poll(&sensorReading);
-		string res = flexReader.Convert(&sensorReading);
-		pc.printf("%s\n", res.c_str());
-		if (res.size() != 0){
-			//set(res.c_str()[0], &ssOut);
-			//update(&ssOut);
-			wait_ms(100);
-			pc.printf("%c",res.c_str()[0]);
-			bt.printf("%c",res.c_str()[0]);
-			
-			
+		string candidate = flexReader.Convert(&sensorReading);
+		string result = "";
+		consensus_queue.push_back(candidate);
+		if (hasConsensus()){
+			result = getConsensus();
+			pc.printf("%s\n", result.c_str());
 		}
 	}
 
