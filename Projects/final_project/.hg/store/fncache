@@ -1,0 +1,10 @@
+data/LSM9DS0/example.cpp.i
+data/flex_sensor.h.i
+data/LSM9DS0/I2Cdev.cpp.i
+data/main.cpp.i
+data/LSM9DS0/mbed.bld.i
+data/LSM9DS0/I2Cdev.h.i
+data/mbed.bld.i
+data/LSM9DS0/LSM9DS0.cpp.i
+data/flex_sensor.cpp.i
+data/LSM9DS0/LSM9DS0.h.i
