@@ -79,7 +79,6 @@ namespace Sensing {
 		for (int i = 0; i < sizeof(adc_channels); ++i){
 			LPC_ADC->ADCR=adc_channels[i]; //set to run on channel x
 			ADCSetup();
-			wait_ms(10);
 			StartConversion();
 			//while((LPC_ADC->ADGDR&31u)==0);
 			wait_ms(10);

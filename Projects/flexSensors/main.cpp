@@ -127,7 +127,7 @@ int main(void) {
 	flexReader.ADCSetup();
 	Sensing::SensorReading sensorReading;
 	while(1) {
-		wait_ms(1000);
+		wait_ms(100);
 		flexReader.Poll(&sensorReading);
 		string res = flexReader.Convert(&sensorReading);
 		pc.printf("%s\n", res.c_str());

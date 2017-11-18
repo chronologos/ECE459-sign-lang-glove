@@ -1,7 +1,9 @@
 #ifndef FLEX_SENSOR_H
 #define FLEX_SENSOR_H
 
+#include "mbed.h" 
 #include <map>
+#include <math.h>
 #include <stdint.h>
 #include <string>
 #include <iostream>
@@ -15,18 +17,20 @@ namespace Sensing {
 //const int DIV_SIZE = (MAX_SCALE-MIN_SCALE)/NUM_STATES;
 
 typedef struct SensorReading {
-	uint8_t thumb;
-	uint8_t finger1;
-	uint8_t finger2;
-	uint8_t finger3;
-	uint8_t finger4;
-	uint8_t palm;
+	int thumb;
+	int finger1;
+	int finger2;
+	int finger3;
+	int finger4;
+	int palm;
 	std::string key;
 	SensorReading(int t, int f1, int f2, int f3, int f4, int p, std::string k) : thumb(t), finger1(f1), finger2(f2), finger3(f3), finger4(f4), palm(p), key(k){}
 	SensorReading() {}
 	
 	int distance_from_key (const SensorReading &o) const{
-		return min_dist(thumb,o.thumb) + min_dist(finger1,o.finger1) + min_dist(finger2,o.finger2) + min_dist(finger3,o.finger3) + min_dist(finger4,o.finger4) + min_dist(palm,o.palm);
+		int dist = sqrt(double(min_dist(thumb,o.thumb) + min_dist(finger1,o.finger1) + min_dist(finger2,o.finger2) + min_dist(finger3,o.finger3) + min_dist(finger4,o.finger4) + min_dist(palm,o.palm)));
+		printf("%d\n", dist);
+		return dist;
 	}
 
 //	bool operator<(const SensorReading &o) const{
@@ -34,7 +38,8 @@ typedef struct SensorReading {
 //	}
 //	
 	int min_dist(int in1, int in2) const{
-		return std::abs(in1-in2);
+		int dist =  std::abs(in1-in2)*std::abs(in1-in2);
+		return dist;
 	}
 	
 	std::string return_key () const{
