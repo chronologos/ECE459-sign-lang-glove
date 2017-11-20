@@ -29,7 +29,6 @@ typedef struct SensorReading {
 	
 	int distance_from_key (const SensorReading &o) const{
 		int dist = sqrt(double(min_dist(thumb,o.thumb) + min_dist(finger1,o.finger1) + min_dist(finger2,o.finger2) + min_dist(finger3,o.finger3) + min_dist(finger4,o.finger4) + min_dist(palm,o.palm)));
-		printf("%d\n", dist);
 		return dist;
 	}
 

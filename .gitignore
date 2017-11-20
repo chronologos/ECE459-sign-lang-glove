@@ -8,3 +8,4 @@
 *.o
 *.dep
 *.map
+*.TMP

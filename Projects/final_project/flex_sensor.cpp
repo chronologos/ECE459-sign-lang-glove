@@ -43,21 +43,9 @@ namespace Sensing {
 		keys.push_back(SensorReading(1650,1850,1550,2025,1650,2500, "x"));
 		keys.push_back(SensorReading(2900,1700,1650,2000,2500,2750, "y"));
 		keys.push_back(SensorReading(2000,2700,1600,2000,1700,2700, "z"));		
-//		for (int i = 0; i < NUM_STATES; ++i) {
-//			scale.push_back(MIN_SCALE+(i+1)*DIV_SIZE);
-//		}
 	}
 		
 	std::string FlexSensorReader::Convert(const SensorReading* flex_reading) const{
-		printf("convert\n");
-//		std::map<SensorReading, std::string>::const_iterator found = LUT.find(*flex_reading);
-//		if (found == LUT.end()){
-//			printf("key [%d,%d,%d,%d,%d] : value not found\n",flex_reading->thumb,flex_reading->finger1,flex_reading->finger2,flex_reading->finger3,flex_reading->finger4);
-//			return "-";
-//		} else {
-//			printf("key [%d,%d,%d,%d,%d] : value %s\n",flex_reading->thumb,flex_reading->finger1,flex_reading->finger2,flex_reading->finger3,flex_reading->finger4,found->second.c_str());
-//				return found->second;
-//		}
 		std::string best_key = "-";
 		int min_score = 60000;
 		int temp_score =  0;
@@ -68,14 +56,12 @@ namespace Sensing {
 				best_key = keys[i].key;
 			}
 		}
-		printf("%d",min_score);
-		printf("convert done\n");
+		// printf("%d",min_score);
 		return best_key;
 	}
 	
 	int FlexSensorReader::Poll(struct SensorReading* flex_reading){
 		uint32_t adc_channels[6] = {1u,2u,4u,8u,16u,32u};
-		//uint32_t adc_channels[5] = {1u,2u,4u,8u,16u};
 		for (int i = 0; i < sizeof(adc_channels); ++i){
 			LPC_ADC->ADCR=adc_channels[i]; //set to run on channel x
 			ADCSetup();
@@ -86,22 +72,22 @@ namespace Sensing {
 			uint16_t raw_data = ExtractData();
 			if (i==0){
 				flex_reading->thumb = raw_data;
-				printf("Thumb: raw_data: %d\n", raw_data);
+				// printf("Thumb: raw_data: %d\n", raw_data);
 			} else if (i==1){
 				flex_reading->finger1 = raw_data;
-				printf("Pointer: raw_data: %d\n", raw_data);
+				// printf("Pointer: raw_data: %d\n", raw_data);
 			} else if (i==2){
 				flex_reading->finger2 = raw_data;
-				printf("Middle: raw_data: %d\n", raw_data);
+				// printf("Middle: raw_data: %d\n", raw_data);
 			} else if (i==3){
 				flex_reading->finger3 = raw_data;
-				printf("Ring: raw_data: %d\n", raw_data);
+				// printf("Ring: raw_data: %d\n", raw_data);
 			} else if (i==4){
 				flex_reading->finger4 = raw_data;
-				printf("Pinkie: raw_data: %d\n", raw_data);
+				// printf("Pinkie: raw_data: %d\n", raw_data);
 			} else if (i==5){
 				flex_reading->palm = raw_data;
-				printf("Palm: raw_data: %d\n", raw_data);
+				// printf("Palm: raw_data: %d\n", raw_data);
 			} else {
 				return 1;
 			}
@@ -127,15 +113,6 @@ namespace Sensing {
 	uint16_t FlexSensorReader::ExtractData() const {
 		return (LPC_ADC->ADGDR>>4)&0x00000fff;
 	}
-	
-//	int FlexSensorReader::ReadingToState(uint16_t reading) const {
-//		for (int i = 0; i < NUM_STATES; ++i) {
-//			if (reading < scale[i]){
-//				return i;
-//			} 
-//		}
-//		return (NUM_STATES-1);
-//	}
 
 
 } /* namespace Sensing */
