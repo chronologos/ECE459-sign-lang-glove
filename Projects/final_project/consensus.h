@@ -6,6 +6,10 @@
 #include <vector>
 
 namespace Consensus {
+	 
+/* this header contains functions which establish consensus on what letter was formed
+ * by multiple polls of a gesture.
+ */
 	
 const int CONSENSUS_N = 10;
 std::vector<string> consensus_queue;
