@@ -15,7 +15,7 @@ namespace ImuFsm {
 					return STATE_WAIT_GZ;
 				default:
 					data->event = KEY_OUT;
-					data->key = gesture;
+					// data->key = gesture;
 					return STATE_DEFAULT;
 			 }
 	  }
@@ -49,4 +49,7 @@ namespace ImuFsm {
 		return do_state_wait (data, 'j', 'z');		
 	}
 	
+	state_t run_state( state_t cur_state, instance_data_t *data ) {
+    return state_table[ cur_state ]( data );
+};
 }

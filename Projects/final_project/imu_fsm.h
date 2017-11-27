@@ -43,9 +43,7 @@ state_func_t* const state_table[ NUM_STATES ] = {
     do_state_default, do_state_wait_ayq, do_state_wait_ayg, do_state_wait_ax, do_state_wait_gz
 };
 
-state_t cur_state = STATE_DEFAULT;
-instance_data_t data;
-
+state_t run_state( state_t cur_state, instance_data_t *data );
 }
 
 #endif /* IMU_FSM_H */
