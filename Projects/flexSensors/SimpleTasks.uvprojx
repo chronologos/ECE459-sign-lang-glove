@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define>TARGET_LPC1768</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\mbed;..\..\mbed\LPC1768</IncludePath>
+              <IncludePath>..\..\mbed;..\..\mbed\TARGET_LPC1768; ..\..\mbed\TARGET_LPC1768\TARGET_NXP\TARGET_LPC176X; ..\..\mbed\TARGET_LPC1768\TARGET_NXP\TARGET_LPC176X\TARGET_MBED_LPC1768</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -364,16 +364,16 @@
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x10000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>..\..\mbed\LPC1768\LPC1768.sct</ScatterFile>
+            <ScatterFile>..\..\mbed\TARGET_LPC1768\TOOLCHAIN_ARM_STD\LPC1768.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>..\..\mbed\LPC1768\startup_LPC17xx.o
-..\..\mbed\LPC1768\system_LPC17xx.o
-..\..\mbed\LPC1768\stackheap.o
-..\..\mbed\LPC1768\core_cm3.o
-..\..\mbed\LPC1768\cmsis_nvic.o
-..\..\mbed\LPC1768\capi.ar
-..\..\mbed\LPC1768\mbed.ar</Misc>
+            <Misc>..\..\mbed\TARGET_LPC1768\TOOLCHAIN_ARM_STD\startup_LPC17xx.o
+..\..\mbed\TARGET_LPC1768\TOOLCHAIN_ARM_STD\system_LPC17xx.o
+..\..\mbed\TARGET_LPC1768\TOOLCHAIN_ARM_STD\cmsis_nvic.o
+..\..\mbed\TARGET_LPC1768\TOOLCHAIN_ARM_STD\sys.o
+..\..\mbed\TARGET_LPC1768\TOOLCHAIN_ARM_STD\retarget.o
+..\..\mbed\TARGET_LPC1768\TOOLCHAIN_ARM_STD\board.o
+..\..\mbed\TARGET_LPC1768\TOOLCHAIN_ARM_STD\mbed.ar</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -383,6 +383,11 @@
         <Group>
           <GroupName>User files</GroupName>
           <Files>
+            <File>
+              <FileName>LSM9DS0.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LSM9DS0\LSM9DS0.h</FilePath>
+            </File>
             <File>
               <FileName>main.cpp</FileName>
               <FileType>8</FileType>
@@ -407,131 +412,6 @@
               <FileName>LSM9DS0.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\LSM9DS0\LSM9DS0.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>LSM9DS0.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\LSM9DS0\LSM9DS0.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Nano_RK</GroupName>
-          <Files>
-            <File>
-              <FileName>adc_driver.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\drivers\platform\adc_driver.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>ff_basic_sensor.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\drivers\platform\ff_basic_sensor.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_cpu.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\hal\nrk_cpu.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_ext_int.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\hal\nrk_ext_int.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_status.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\hal\nrk_status.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_timer.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\hal\nrk_timer.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_watchdog.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\hal\nrk_watchdog.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_driver.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_driver.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_error.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_error.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_events.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_events.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_idle_task.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_idle_task.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_reserve.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_reserve.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_scheduler.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_scheduler.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_stack_check.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_stack_check.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_stats.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_stats.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_sw_wdt.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_sw_wdt.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_task.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_task.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_time.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\kernel\source\nrk_time.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>hal_wait.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\platform\hal_wait.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>nrk_eeprom.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\platform\nrk_eeprom.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>ulib.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\mrk\src\platform\ulib.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>my_asm.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\mrk\my_asm.s</FilePath>
             </File>
           </Files>
         </Group>
