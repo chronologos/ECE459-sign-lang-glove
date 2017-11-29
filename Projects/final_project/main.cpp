@@ -45,13 +45,13 @@ int main(void) {
 		string candidate = flexReader.Convert(&sensorReading);
 		string result = "";
 		Consensus::consensus_queue.push_back(candidate);
-		if (Consensus::hasConsensus()){
-			result = Consensus::getConsensus()[0];
+		if (Consensus::hasConsensusOrClear()){
+			result = Consensus::getConsensusAndClear();
 			data.event = ImuFsm::GESTURE_IN;
 			data.key = result;
 			cur_state = ImuFsm::run_state(cur_state, &data);
 			if (data.event == ImuFsm::KEY_OUT){
-				pc.printf("result (consensus): %s\n", result.c_str());
+				pc.printf("result (from flex sensor alone): %s\n", result.c_str());
 				} 
 			else if (cur_state == ImuFsm::STATE_WAIT_AY_Q 
 					  || cur_state == ImuFsm::STATE_WAIT_AY_G

@@ -23,7 +23,7 @@ void emptyQueue(){
 /* Check if last CONSENSUS_N readings constitute a consensus on what character was 
  * read. IMPT: Clears vector if no consensus. 
  */ 
-bool hasConsensus(){
+bool hasConsensusOrClear(){
 	if (consensus_queue.size() < CONSENSUS_N){
 		return false;
 	}
@@ -38,7 +38,7 @@ bool hasConsensus(){
 }
 
 /* Return consensus value and clears vector, only safe to call if hasConsensus! */
-std::string getConsensus(){
+std::string getConsensusAndClear(){
 		string consensus = consensus_queue[0];
 		emptyQueue();
 		return consensus;
