@@ -22,6 +22,12 @@ Sensing::FlexSensorReader flex_reader;
 Sensing::SensorReading sensor_reading();
 LSM9DS0 dof(p9, p10,LSM9DS0_G, LSM9DS0_XM);
 Timer timer;
+string prev_key = "";
+
+void print_key_out(ImuFsm::instance_data_t *data){
+	prev_key = data->key;
+	pc.printf("result: %s\n", data->key.c_str());
+}
 
 // Main function
 int main(void) {
@@ -39,20 +45,27 @@ int main(void) {
 	Sensing::FlexSensorReader flexReader;
 	flexReader.ADCSetup();
 	Sensing::SensorReading sensorReading;
+	// Outer loop: poll and look for consensus.
 	while(1) {
 		wait_ms(100);
 		flexReader.Poll(&sensorReading);
 		string candidate = flexReader.Convert(&sensorReading);
 		string result = "";
 		Consensus::consensus_queue.push_back(candidate);
+		// Update FSM state and check for outputs if any
 		if (Consensus::hasConsensusOrClear()){
+			// Inputs to FSM go in through ImuFsm::instance_data_t data;
+			// FSM actuates/outputs on transition arrows (i.e. it is a Mealy machine)
+			// Outputs go out thru ImuFsm::instance_data_t data as well.
 			result = Consensus::getConsensusAndClear();
 			data.event = ImuFsm::GESTURE_IN;
 			data.key = result;
+			data.prev_key = prev_key;
 			cur_state = ImuFsm::run_state(cur_state, &data);
 			if (data.event == ImuFsm::KEY_OUT){
-				pc.printf("result (from flex sensor alone): %s\n", result.c_str());
-				} 
+				print_key_out(&data);
+			}
+			// We turn on IMU if we are in a state that requires IMU data.
 			else if (cur_state == ImuFsm::STATE_WAIT_AY_Q 
 					  || cur_state == ImuFsm::STATE_WAIT_AY_G
 					  || cur_state == ImuFsm::STATE_WAIT_AX
@@ -61,6 +74,7 @@ int main(void) {
 				while (1){
 					dof.readAccel();
 					dof.readGyro();
+					// We exit the IMU polling loop if 1) timeout OR 2) particular motion detected.
 					if (timer.read_ms() > TIMEOUT_MS){
 						data.event = ImuFsm::TIMEOUT_IN;
 						timer.stop();
@@ -73,7 +87,9 @@ int main(void) {
 						data.key = 'y';
 						cur_state = ImuFsm::run_state(cur_state, &data);
 						pc.printf("y axis motion detected.\n");
-						pc.printf("result (consensus + imu): %s\n", data.key.c_str());
+						if (data.event == ImuFsm::KEY_OUT){
+							print_key_out(&data);
+						}
 						break;
 					}
 					else if(dof.calcGyro(dof.gx) - dof.gbias[0]>J_GX_THRESHOLD){ //TODO(iantay) change to gz
@@ -81,7 +97,9 @@ int main(void) {
 						data.key = 'z';
 						cur_state = ImuFsm::run_state(cur_state, &data);
 						pc.printf("j motion detected.\n");
-						pc.printf("result (consensus + imu): %s\n", data.key.c_str());
+						if (data.event == ImuFsm::KEY_OUT){
+							print_key_out(&data);
+						}
 						break;
 					}
 					else if(dof.calcGyro(dof.ax) - dof.abias[0]<Q_X_AXIS_THRESHOLD){
@@ -89,7 +107,9 @@ int main(void) {
 						data.key = 'x';
 						cur_state = ImuFsm::run_state(cur_state, &data);
 						pc.printf("q orientation detected.\n");
-						pc.printf("result (consensus + imu): %s\n", data.key.c_str());
+						if (data.event == ImuFsm::KEY_OUT){
+							print_key_out(&data);
+						}
 						break;
 					}
 		//		pc.printf("%2f",dof.calcGyro(dof.gx) - dof.gbias[0]);

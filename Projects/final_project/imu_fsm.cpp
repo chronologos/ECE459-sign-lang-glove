@@ -14,7 +14,9 @@ namespace ImuFsm {
 				case 'j':
 					return STATE_WAIT_GZ;
 				default:
-					data->event = KEY_OUT;
+					if (data->prev_key != data->key){
+						data->event = KEY_OUT;
+					} // So if key is repeated, nothing happens and txn back to STATE_DEFAULT
 					// data->key = gesture;
 					return STATE_DEFAULT;
 			 }
@@ -52,4 +54,8 @@ namespace ImuFsm {
 	state_t run_state( state_t cur_state, instance_data_t *data ) {
     return state_table[ cur_state ]( data );
 };
+	state_t do_state_fn(instance_data_t *data) {
+		return STATE_DEFAULT;
+	}
+
 }
