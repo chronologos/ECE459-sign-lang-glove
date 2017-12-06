@@ -33,7 +33,11 @@ typedef struct SensorReading {
       key(k), in_fn_layer(in_fn_layer){}
 	
   SensorReading() {}
-	
+		
+	void printify() const {
+		printf("keys.push_back(SensorReading(%d, %d, %d, %d, %d, %d, \n", thumb, finger1, finger2, finger3, finger4, palm);
+	}
+
 	int distance_from_key (const SensorReading &o) const{
 		int dist = sqrt(double(min_dist(thumb,o.thumb) + min_dist(finger1,o.finger1) + 
 			min_dist(finger2,o.finger2) + min_dist(finger3,o.finger3) + 
@@ -48,6 +52,10 @@ typedef struct SensorReading {
 	
 } SensorReading;
 
+void averageReadings(
+	SensorReading* srp1, SensorReading* srp2, 
+	SensorReading* srp3, SensorReading* srp4, 
+  SensorReading* srp5, SensorReading* avg);
 
 /* FlexSensorReader handles all interactions with Flex Sensors and ADC */
 class FlexSensorReader {
