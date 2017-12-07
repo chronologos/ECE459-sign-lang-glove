@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 
+bool DEBUG = false;
 namespace Sensing {
 	void averageReadings(
 	SensorReading* srp1, SensorReading* srp2, 
@@ -87,22 +88,22 @@ namespace Sensing {
 			// pointer p18(8u), thumb p19(16u). palm p20(32u)
 			if (i==0){
 				flex_reading->thumb = raw_data;
-				//printf("thumb: raw_data: %d\n", raw_data);
+				if (DEBUG) printf("thumb: raw_data: %d\n", raw_data);
 			} else if (i==1){
 				flex_reading->finger1 = raw_data;
-				//printf("finger1: raw_data: %d\n", raw_data);
+				if (DEBUG) printf("finger1: raw_data: %d\n", raw_data);
 			} else if (i==2){
 				flex_reading->finger2 = raw_data;
-				//printf("finger2: raw_data: %d\n", raw_data);
+				if (DEBUG) printf("finger2: raw_data: %d\n", raw_data);
 			} else if (i==3){
 				flex_reading->finger3 = raw_data;
-				//printf("finger3: raw_data: %d\n", raw_data);
+				if (DEBUG) printf("finger3: raw_data: %d\n", raw_data);
 			} else if (i==4){
 				flex_reading->finger4 = raw_data;
-				//printf("finger4: raw_data: %d\n", raw_data);
+				if (DEBUG) printf("finger4: raw_data: %d\n", raw_data);
 			} else if (i==5){
 				flex_reading->palm = raw_data;
-				//printf("palm: raw_data: %d\n\n", raw_data);
+				if (DEBUG) printf("palm: raw_data: %d\n\n", raw_data);
 			} else {
 				return 1;
 			}

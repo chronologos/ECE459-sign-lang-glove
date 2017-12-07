@@ -35,7 +35,6 @@ typedef struct {
 	string key; // populated with gesture name if event=GESTURE,
 	            // populated with key pressed if event=RETURN_KEY
 		          // otherwise empty.
-	string prev_key;
 }	instance_data_t;
 
 typedef state_t state_func_t(instance_data_t *data);

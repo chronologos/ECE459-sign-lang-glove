@@ -9,10 +9,10 @@
 #define LSM9DS0_XM  0x1D // Would be 0x1E if SDO_XM is LOW
 #define LSM9DS0_G   0x6B // Would be 0x6A if SDO_G is LOW
 
-const float Q_X_AXIS_THRESHOLD = -0.8;
-const float Y_AXIS_MVMT_THRESHOLD = 0.4;
+const float Z_X_AXIS_THRESHOLD = -0.8;
+const float Y_AXIS_MVMT_THRESHOLD = 0.8;
 // const float G_Y_AXIS_THRESHOLD = 0.8;
-const float J_GX_THRESHOLD = 150.0;
+const float J_GZ_THRESHOLD = 150.0;
 const int TIMEOUT_MS = 100;
 AnalogIn adcin1(p15), adcin2(p16), adcin3(p17), adcin4(p18), adcin5(p19), adcin6(p20);
 DigitalOut led1(LED1), led2(LED2), led3(LED3);
@@ -27,7 +27,7 @@ typedef enum ModeT {
 	TEST
 } ModeT;
 
-ModeT mode = TEST;
+ModeT mode = NORMAL;
 
 void print_key_out(ImuFsm::instance_data_t *data){
 	prev_key = data->key;
@@ -66,8 +66,11 @@ int main(void) {
 				result = Consensus::getConsensusAndClear();
 				data.event = ImuFsm::GESTURE_IN;
 				data.key = result;
-				data.prev_key = prev_key;
 				cur_state = ImuFsm::run_state(cur_state, &data);
+				
+				cur_state = ImuFsm::STATE_WAIT_AX ;
+				data.event = ImuFsm::GESTURE_IN;
+				
 				if (data.event == ImuFsm::KEY_OUT){
 					print_key_out(&data);
 				}
@@ -86,6 +89,7 @@ int main(void) {
 							timer.stop();
 							timer.reset();
 							cur_state = ImuFsm::run_state(cur_state, &data);
+							printf("timeout\n");
 							break;
 						}
 						else if(dof.calcAccel(dof.ay)-dof.abias[1]>Y_AXIS_MVMT_THRESHOLD){
@@ -96,9 +100,11 @@ int main(void) {
 							if (data.event == ImuFsm::KEY_OUT){
 								print_key_out(&data);
 							}
+						  timer.stop();
+							timer.reset();
 							break;
 						}
-						else if(dof.calcGyro(dof.gx) - dof.gbias[0]>J_GX_THRESHOLD){ //TODO(iantay) change to gz
+						else if(dof.calcGyro(dof.gx) - dof.gbias[0]>J_GZ_THRESHOLD){ //TODO(iantay) change to gz
 							data.event = ImuFsm::MOTION_IN;
 							data.key = 'z';
 							cur_state = ImuFsm::run_state(cur_state, &data);
@@ -106,16 +112,20 @@ int main(void) {
 							if (data.event == ImuFsm::KEY_OUT){
 								print_key_out(&data);
 							}
+						  timer.stop();
+							timer.reset();
 							break;
 						}
-						else if(dof.calcGyro(dof.ax) - dof.abias[0]<Q_X_AXIS_THRESHOLD){
+						else if(dof.calcAccel(dof.ax) - dof.abias[0]<Z_X_AXIS_THRESHOLD){
 							data.event = ImuFsm::MOTION_IN;
 							data.key = 'x';
 							cur_state = ImuFsm::run_state(cur_state, &data);
-							pc.printf("q orientation detected.\n");
+							pc.printf("z orientation detected.\n");
 							if (data.event == ImuFsm::KEY_OUT){
 								print_key_out(&data);
 							}
+							timer.stop();
+							timer.reset();
 							break;
 						}
 			//		pc.printf("%2f",dof.calcGyro(dof.gx) - dof.gbias[0]);

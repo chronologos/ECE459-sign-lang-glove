@@ -1,7 +1,9 @@
 #include "imu_fsm.h"
 
 namespace ImuFsm {
+	char prev_key = '!';
 	state_t do_state_default(instance_data_t *data) {
+		printf("prev key: %c\n", prev_key);
 		if (data->event == GESTURE_IN) {
 			char gesture = data->key.c_str()[0];
 			switch (gesture) {
@@ -14,8 +16,11 @@ namespace ImuFsm {
 				case 'j':
 					return STATE_WAIT_GZ;
 				default:
-					if (data->prev_key != data->key){
+					if (prev_key != data->key.c_str()[0]){
 						data->event = KEY_OUT;
+						prev_key = data->key.c_str()[0];
+					} else {
+						printf("repeat\n");
 					} // So if key is repeated, nothing happens and txn back to STATE_DEFAULT
 					// data->key = gesture;
 					return STATE_DEFAULT;
@@ -27,9 +32,17 @@ namespace ImuFsm {
 	state_t do_state_wait(instance_data_t *data, char out, char mtn){
 		if (data->event == MOTION_IN) {
 			char motion = data->key.c_str()[0];
-			if (motion == mtn) {
+			if (prev_key == out) {
+				printf("repeat\n");
+				return STATE_DEFAULT;
+			}
+			else if (motion == mtn) {
+				  printf("prev key is %c\n", prev_key);
+					printf("out is %c\n", out);
 					data->event = KEY_OUT;
-					data->key = out;
+				  std::string s(1, out);
+				  data->key = s;
+					prev_key = out;
 			 }
 	  }
 		return STATE_DEFAULT;
