@@ -9,10 +9,12 @@
 #define LSM9DS0_XM  0x1D // Would be 0x1E if SDO_XM is LOW
 #define LSM9DS0_G   0x6B // Would be 0x6A if SDO_G is LOW
 
-const float Z_X_AXIS_THRESHOLD = -0.8;
-const float Y_AXIS_MVMT_THRESHOLD = 0.8;
+const float NX_AXIS_THRESHOLD = -0.8;
+const float Y_AXIS_THRESHOLD = 0.8;
 // const float G_Y_AXIS_THRESHOLD = 0.8;
 const float J_GZ_THRESHOLD = 150.0;
+const float Z_AXIS_THRESHOLD = 0.90;
+const float NZ_AXIS_THRESHOLD = -0.80;
 const int TIMEOUT_MS = 100;
 AnalogIn adcin1(p15), adcin2(p16), adcin3(p17), adcin4(p18), adcin5(p19), adcin6(p20);
 DigitalOut led1(LED1), led2(LED2), led3(LED3);
@@ -24,7 +26,8 @@ string prev_key = "";
 
 typedef enum ModeT {
 	NORMAL,
-	TEST
+	TEST,
+	IMUTEST
 } ModeT;
 
 ModeT mode = NORMAL;
@@ -67,9 +70,9 @@ int main(void) {
 				data.event = ImuFsm::GESTURE_IN;
 				data.key = result;
 				cur_state = ImuFsm::run_state(cur_state, &data);
-				
-				cur_state = ImuFsm::STATE_WAIT_AX ;
-				data.event = ImuFsm::GESTURE_IN;
+				sensorReading.printify();
+				//cur_state = ImuFsm::STATE_WAIT_AX ; TODO(iantay) remove these debug stmts
+				//data.event = ImuFsm::GESTURE_IN;
 				
 				if (data.event == ImuFsm::KEY_OUT){
 					print_key_out(&data);
@@ -78,7 +81,8 @@ int main(void) {
 				else if (cur_state == ImuFsm::STATE_WAIT_AY_Q 
 							|| cur_state == ImuFsm::STATE_WAIT_AY_G
 							|| cur_state == ImuFsm::STATE_WAIT_AX
-							|| cur_state == ImuFsm::STATE_WAIT_GZ) {
+							|| cur_state == ImuFsm::STATE_WAIT_GZ
+			       	|| cur_state == ImuFsm::STATE_WAIT_5) {
 					timer.start();
 					while (1){
 						dof.readAccel();
@@ -92,7 +96,7 @@ int main(void) {
 							printf("timeout\n");
 							break;
 						}
-						else if(dof.calcAccel(dof.ay)-dof.abias[1]>Y_AXIS_MVMT_THRESHOLD){
+						else if(dof.calcAccel(dof.ay)-dof.abias[1]>Y_AXIS_THRESHOLD){
 							data.event = ImuFsm::MOTION_IN;
 							data.key = 'y';
 							cur_state = ImuFsm::run_state(cur_state, &data);
@@ -104,7 +108,7 @@ int main(void) {
 							timer.reset();
 							break;
 						}
-						else if(dof.calcGyro(dof.gx) - dof.gbias[0]>J_GZ_THRESHOLD){ //TODO(iantay) change to gz
+						else if(dof.calcGyro(dof.gx) - dof.gbias[2]>J_GZ_THRESHOLD){ //TODO(iantay) change to gz
 							data.event = ImuFsm::MOTION_IN;
 							data.key = 'z';
 							cur_state = ImuFsm::run_state(cur_state, &data);
@@ -116,11 +120,35 @@ int main(void) {
 							timer.reset();
 							break;
 						}
-						else if(dof.calcAccel(dof.ax) - dof.abias[0]<Z_X_AXIS_THRESHOLD){
+						else if(dof.calcAccel(dof.ax) - dof.abias[0]<NX_AXIS_THRESHOLD){
 							data.event = ImuFsm::MOTION_IN;
-							data.key = 'x';
+							data.key = 'X'; // TODO(iantay) change to enum
 							cur_state = ImuFsm::run_state(cur_state, &data);
-							pc.printf("z orientation detected.\n");
+							pc.printf("-x accel detected.\n");
+							if (data.event == ImuFsm::KEY_OUT){
+								print_key_out(&data);
+							}
+							timer.stop();
+							timer.reset();
+							break;
+						}
+						else if(dof.calcAccel(dof.az) - dof.abias[2]>Z_AXIS_THRESHOLD){
+							data.event = ImuFsm::MOTION_IN;
+							data.key = 'z'; // TODO(iantay) change to enum
+							cur_state = ImuFsm::run_state(cur_state, &data);
+							pc.printf("z accel detected.\n");
+							if (data.event == ImuFsm::KEY_OUT){
+								print_key_out(&data);
+							}
+							timer.stop();
+							timer.reset();
+							break;
+						}
+						else if(dof.calcAccel(dof.az) - dof.abias[2]<NZ_AXIS_THRESHOLD){
+							data.event = ImuFsm::MOTION_IN;
+							data.key = 'Z'; // TODO(iantay) change to enum
+							cur_state = ImuFsm::run_state(cur_state, &data);
+							pc.printf("-z accel detected.\n");
 							if (data.event == ImuFsm::KEY_OUT){
 								print_key_out(&data);
 							}
@@ -164,6 +192,22 @@ int main(void) {
 				Sensing::averageReadings(&sensorReading1, &sensorReading2,
 					&sensorReading3, &sensorReading4, &sensorReading5, &sensorReadingAverage);
 				sensorReadingAverage.printify();
+			}
+		} else if (mode == IMUTEST){
+			while(1){
+				wait_ms(1000);
+				dof.readAccel();
+				dof.readGyro();
+				pc.printf("%2f",dof.calcGyro(dof.gx) - dof.gbias[0]);
+				pc.printf(", ");
+				pc.printf("%2f",dof.calcGyro(dof.gy) - dof.gbias[1]);
+				pc.printf(", ");
+				pc.printf("%2f\n",dof.calcGyro(dof.gz) - dof.gbias[2]);
+				pc.printf("%2f",dof.calcAccel(dof.ax) - dof.abias[0]);
+				pc.printf(", ");
+				pc.printf("%2f",dof.calcAccel(dof.ay) - dof.abias[1]);
+				pc.printf(", ");
+				pc.printf("%2f\n",dof.calcAccel(dof.az) - dof.abias[2]);
 			}
 		}
 	return 0;

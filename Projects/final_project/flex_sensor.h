@@ -30,7 +30,7 @@ typedef struct SensorReading {
 		std::string k, int in_fn_layer) : 
 			thumb(t), finger1(f1), finger2(f2), 
       finger3(f3), finger4(f4), palm(p), 
-      key(k), in_fn_layer(in_fn_layer){}
+      key(k), in_fn_layer(in_fn_layer) {}
 	
   SensorReading() {}
 		

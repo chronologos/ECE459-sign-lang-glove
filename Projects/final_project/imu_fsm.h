@@ -16,6 +16,8 @@ typedef enum {
 	STATE_WAIT_GZ,
 	FN_LAYER_ACTIVE, // When shift/function layer of glove is active
 	                 // analogous to when you hold down "shift" on a keyboard.
+	STATE_WAIT_5,  // space, backspace, 5 or repeat
+	STATE_WAIT_A, // a or shift or s or t or m or n or e?
 	NUM_STATES 
 } state_t;
 
@@ -24,7 +26,7 @@ typedef enum {
 	MOTION_IN, // instance_data_t->key is interpreted a motion
 	TIMEOUT_IN, // instance_data_t->key is ignored
 	KEY_OUT, // instance_data_t->key is used to output a character in ASL
-	FN_TOGGLE_IN // instance_data_t->key is ignored
+	NOOP // instance_data_t->key is ignored
 } event_t;
 
 /* instance_data_t is used to pass input into fsm and return output to client.
@@ -44,9 +46,12 @@ state_t do_state_wait_ayg(instance_data_t *data);
 state_t do_state_wait_ax(instance_data_t *data);
 state_t do_state_wait_gz(instance_data_t *data);
 state_t do_state_fn(instance_data_t *data);
+state_t do_state_wait_5(instance_data_t *data);
+state_t do_state_wait_a(instance_data_t *data);
 
 state_func_t* const state_table[ NUM_STATES ] = {
-    do_state_default, do_state_wait_ayq, do_state_wait_ayg, do_state_wait_ax, do_state_wait_gz, do_state_fn
+    do_state_default, do_state_wait_ayq, do_state_wait_ayg, do_state_wait_ax, do_state_wait_gz, do_state_fn,
+	do_state_wait_5
 };
 
 state_t run_state( state_t cur_state, instance_data_t *data );

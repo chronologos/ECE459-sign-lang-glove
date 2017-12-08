@@ -21,42 +21,42 @@ namespace Sensing {
 		 *
 		 */
 		keys.reserve(40);
-		keys.push_back(SensorReading(1700,2600,1450,1800,1675,2450, "1", 1));
-		keys.push_back(SensorReading(1800,2750,2625,1750,1750,2350, "2", 1));
-		keys.push_back(SensorReading(2825,2750,2600,1750,1700,2700, "3", 1));
-		keys.push_back(SensorReading(1700,2725,2650,3000,2700,2700, "4", 1));
-	  keys.push_back(SensorReading(2750,2725,2550,2900,2700,2800, "5", 1));
-		keys.push_back(SensorReading(1550,2750,2600,2750,1600,2300, "6", 1));
-		keys.push_back(SensorReading(1750,2750,2500,1700,2650,2500, "7", 1));
-		keys.push_back(SensorReading(1850,2700,1400,2900,2800,2750, "8", 1));
-		keys.push_back(SensorReading(2000,1550,2700,2900,2750,2800, "9", 1));
+		//keys.push_back(SensorReading(1563, 2297, 1272, 631, 1206, 2007, "1", 1)); d
+		//keys.push_back(SensorReading(1523, 2363, 2071, 1230, 1272, 1894, "2", 1)); k
+		keys.push_back(SensorReading(1832, 2299, 2025, 564, 1682, 2135, "3", 1));
+		//keys.push_back(SensorReading(1078, 2316, 2045, 1177, 2001, 2311, "4", 1)); b
+	  keys.push_back(SensorReading(1683, 1980, 1922, 1004, 1757, 2208, "5", 1));
+		//keys.push_back(SensorReading(1379, 2272, 2021, 1056, 1293, 1903, "6", 1)); w
+		keys.push_back(SensorReading(1322, 2585, 1950, 550, 1942, 2058, "7", 1));
+		keys.push_back(SensorReading(1318, 3454, 1150, 1027, 1964, 2222, "8", 1));
+		keys.push_back(SensorReading(1470, 1069, 2043, 1201, 2002, 2328, "9", 1));
 
-		keys.push_back(SensorReading(1751, 1140, 1024, 1327, 1246, 1959, "a", 0));
-		keys.push_back(SensorReading(1350, 2252, 2170, 2543, 2373, 2025, "b", 0));	
-		keys.push_back(SensorReading(1421, 1502, 1140, 1537, 1687, 2111, "c", 0));
-		keys.push_back(SensorReading(1448, 2378, 1048, 1338, 1287, 1902, "d", 0));
-		keys.push_back(SensorReading(1307, 1044, 1029, 1315, 1323, 2127, "e", 0));
-		keys.push_back(SensorReading(1454, 1239, 2375, 3490, 2426, 2281, "f", 0));
-		keys.push_back(SensorReading(1896, 2060, 1206, 2014, 1369, 1755, "g", 0));
-		keys.push_back(SensorReading(1268, 2145, 2114, 1525, 1481, 2207, "h", 0));
-		keys.push_back(SensorReading(1329, 1112, 1059, 1391, 2313, 2093, "i", 0));
-		keys.push_back(SensorReading(1339, 1221, 1176, 1483, 2132, 1967, "j", 0));
-		keys.push_back(SensorReading(1932, 2385, 2284, 1496, 1376, 1896, "k", 0));
-		keys.push_back(SensorReading(2086, 2235, 1100, 1533, 1478, 2029, "l", 0));
-		keys.push_back(SensorReading(1489, 1252, 1280, 1459, 1311, 1878, "m", 0));
-		keys.push_back(SensorReading(1536, 1272, 1275, 1539, 1292, 2096, "n", 0));
-		keys.push_back(SensorReading(1508, 1382, 1197, 1640, 1501, 2326, "o", 0));
-		keys.push_back(SensorReading(1944, 2307, 1494, 2922, 1305, 1884, "p", 0));
-		keys.push_back(SensorReading(1994, 1984, 1161, 3953, 1380, 2010, "q", 0));
-		keys.push_back(SensorReading(2831, 2257, 1683, 1356, 1477, 2034, "r", 0));
-		keys.push_back(SensorReading(1950,1450,1475,1800,1750,2650, "s", 0));
-		keys.push_back(SensorReading(2450,1800,1500,1950,1700,2500, "t", 0));
-		keys.push_back(SensorReading(1950,2750,2600,1875,1750,2500, "u", 0));
-		keys.push_back(SensorReading(2000,2900,2750,1900,1800,2500, "v", 0));
-		keys.push_back(SensorReading(2000,2900,2750,3000,1825,2400, "w", 0));
-		keys.push_back(SensorReading(1650,1850,1550,2025,1650,2500, "x", 0));
-		keys.push_back(SensorReading(2900,1700,1650,2000,2500,2750, "y", 0));
-		keys.push_back(SensorReading(2000,2700,1600,2000,1700,2700, "z", 0));
+		keys.push_back(SensorReading(1281, 1256, 1128, 559, 954, 2048, "a", 0));
+		keys.push_back(SensorReading(1829, 1856, 1974, 1152, 1985, 2126, "b", 0));	
+		keys.push_back(SensorReading(1477, 1475, 1151, 617, 2026, 2176, "c", 0));
+		keys.push_back(SensorReading(1886, 1914, 1106, 546, 1927, 1509, "d", 0));
+		keys.push_back(SensorReading(1105, 1106, 1099, 516, 1651, 2068, "e", 0));
+		keys.push_back(SensorReading(1387, 1382, 2074, 1240, 2012, 2238, "f", 0));
+		keys.push_back(SensorReading(1820, 1829, 1254, 587, 1085, 1779, "g", 0));
+		keys.push_back(SensorReading(1451, 1897, 1944, 595, 1659, 1720, "h", 0));
+		keys.push_back(SensorReading(734, 723, 1143, 533, 2030, 1989, "i", 0));
+		keys.push_back(SensorReading(1362, 1024, 1205, 602, 1962, 2029, "j", 0));
+		keys.push_back(SensorReading(1553, 2270, 2033, 581, 1119, 1841, "k", 0));
+		keys.push_back(SensorReading(1819, 2261, 1230, 632, 1141, 2079, "l", 0));
+		keys.push_back(SensorReading(1094, 1125, 1371, 642, 1131, 1874, "m", 0));
+		keys.push_back(SensorReading(1271, 1167, 1387, 631, 1093, 2133, "n", 0));
+		keys.push_back(SensorReading(1485, 1237, 1288, 638, 1379, 2088, "o", 0));
+		keys.push_back(SensorReading(1729, 2596, 1626, 610, 1093, 1889, "p", 0));
+		keys.push_back(SensorReading(1709, 1773, 1241, 632, 1130, 2050, "q", 0));
+		keys.push_back(SensorReading(1342, 2301, 1868, 521, 1057, 2006, "r", 0));
+		keys.push_back(SensorReading(1343, 2751, 1310, 610, 1184, 2147, "s", 0));
+		keys.push_back(SensorReading(1394, 2569, 1297, 673, 1157, 2156, "t", 0));
+		keys.push_back(SensorReading(1376, 2463, 2071, 577, 1139, 2125, "u", 0));
+		keys.push_back(SensorReading(1388, 2331, 2056, 595, 1197, 2013, "v", 0));
+		keys.push_back(SensorReading(1374, 2321, 2090, 1188, 1199, 1740, "w", 0));
+		keys.push_back(SensorReading(995, 1953, 1216, 629, 2096, 1650, "x", 0));
+		keys.push_back(SensorReading(1782, 1005, 1235, 609, 2192, 2063, "y", 0));
+		keys.push_back(SensorReading(1298, 2306, 1268, 582, 1144, 1708, "z", 0));
 	}
 
 	std::string FlexSensorReader::Convert(const SensorReading* flex_reading) const{
