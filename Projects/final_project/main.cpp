@@ -1,8 +1,8 @@
-#include "mbed.h"                    
+#include "mbed.h"
 #include <stdio.h>
 #include <stdint.h>
 #include "flex_sensor.h"
-#include "LSM9DS0/LSM9DS0.h" 
+#include "LSM9DS0/LSM9DS0.h"
 #include "consensus.h"
 #include "imu_fsm.h"
 
@@ -57,12 +57,12 @@ int main(void) {
 	ImuFsm::instance_data_t data;
 	pc.baud(115200);
 	bt.baud(9600);
-	
+
 	// Initialize IMU
 	uint16_t status = dof.begin();
-  pc.printf("LSM9DS0 WHO_AM_I's returned: 0x");
-  pc.printf("%x\n",status);
-  pc.printf("Should be 0x49D4\n\n");
+	pc.printf("LSM9DS0 WHO_AM_I's returned: 0x");
+	pc.printf("%x\n",status);
+	pc.printf("Should be 0x49D4\n\n");
 
 	Sensing::FlexSensorReader flexReader;
 	flexReader.ADCSetup();
@@ -90,7 +90,7 @@ int main(void) {
 				sensorReading.printify();
 				//cur_state = ImuFsm::STATE_WAIT_AX ; TODO(iantay) remove these debug stmts
 				//data.event = ImuFsm::GESTURE_IN;
-				
+
 				if (data.event == ImuFsm::KEY_OUT){
 					print_key_out(&data);
 				}
@@ -128,62 +128,62 @@ int main(void) {
 				}
 				// We turn on IMU if we are in a state that requires IMU data.
 				else if (cur_state == ImuFsm::STATE_WAIT_IJ
-							|| cur_state == ImuFsm::STATE_WAIT_GDZQ
-			       	|| cur_state == ImuFsm::STATE_WAIT_5
-				      || cur_state == ImuFsm::STATE_WAIT_A) {
-					timer.start();
-					while (1){
-						dof.readAccel();
-						dof.readGyro();
-						// We exit the IMU polling loop if 1) timeout OR 2) particular motion detected.
-						if (timer.read_ms() > TIMEOUT_MS){
-							data.event = ImuFsm::TIMEOUT_IN;
-							timer.stop();
-							timer.reset();
-							cur_state = ImuFsm::run_state(cur_state, &data);
-							printf("timeout\n");
-							break;
+					|| cur_state == ImuFsm::STATE_WAIT_GDZQ
+					|| cur_state == ImuFsm::STATE_WAIT_5
+					|| cur_state == ImuFsm::STATE_WAIT_A) {
+						timer.start();
+						while (1){
+							dof.readAccel();
+							dof.readGyro();
+							// We exit the IMU polling loop if 1) timeout OR 2) particular motion detected.
+							if (timer.read_ms() > TIMEOUT_MS){
+								data.event = ImuFsm::TIMEOUT_IN;
+								timer.stop();
+								timer.reset();
+								cur_state = ImuFsm::run_state(cur_state, &data);
+								printf("timeout\n");
+								break;
+							}
+							else if(dof.calcAccel(dof.ay)-dof.abias[1]>Y_AXIS_THRESHOLD){
+								handle_motion('y', &data, &timer, &cur_state);
+								break;
+							}
+							else if(dof.calcAccel(dof.ay)-dof.abias[1]<NY_AXIS_THRESHOLD){
+								handle_motion('Y', &data, &timer, &cur_state);
+								break;
+							}
+							else if(dof.calcAccel(dof.ax) - dof.abias[0]<NX_AXIS_THRESHOLD){
+								handle_motion('X', &data, &timer, &cur_state);
+								break;
+							}
+							else if(dof.calcAccel(dof.ax) - dof.abias[0]>X_AXIS_THRESHOLD){
+								handle_motion('x', &data, &timer, &cur_state);
+								break;
+							}
+							else if(dof.calcAccel(dof.az) - dof.abias[2]>Z_AXIS_THRESHOLD){
+								handle_motion('z', &data, &timer, &cur_state);
+								break;
+							}
+							else if(dof.calcAccel(dof.az) - dof.abias[2]<NZ_AXIS_THRESHOLD){
+								handle_motion('Z', &data, &timer, &cur_state);
+								break;
+							}
+							//		pc.printf("%2f",dof.calcGyro(dof.gx) - dof.gbias[0]);
+							//    pc.printf(", ");
+							//    pc.printf("%2f",dof.calcGyro(dof.gy) - dof.gbias[1]);
+							//    pc.printf(", ");
+							//    pc.printf("%2f\n",dof.calcGyro(dof.gz) - dof.gbias[2]);
+							//		pc.printf("%2f",dof.calcAccel(dof.ax) - dof.abias[0]);
+							//    pc.printf(", ");
+							//    pc.printf("%2f",dof.calcAccel(dof.ay) - dof.abias[1]);
+							//    pc.printf(", ");
+							//    pc.printf("%2f\n",dof.calcAccel(dof.az) - dof.abias[2]);
 						}
-						else if(dof.calcAccel(dof.ay)-dof.abias[1]>Y_AXIS_THRESHOLD){
-							handle_motion('y', &data, &timer, &cur_state);
-							break;
-						}
-						else if(dof.calcAccel(dof.ay)-dof.abias[1]<NY_AXIS_THRESHOLD){
-							handle_motion('Y', &data, &timer, &cur_state);
-							break;
-						}
-						else if(dof.calcAccel(dof.ax) - dof.abias[0]<NX_AXIS_THRESHOLD){
-							handle_motion('X', &data, &timer, &cur_state);
-							break;
-						}
-						else if(dof.calcAccel(dof.ax) - dof.abias[0]>X_AXIS_THRESHOLD){
-							handle_motion('x', &data, &timer, &cur_state);
-							break;
-						}
-						else if(dof.calcAccel(dof.az) - dof.abias[2]>Z_AXIS_THRESHOLD){
-							handle_motion('z', &data, &timer, &cur_state);
-							break;
-						}
-						else if(dof.calcAccel(dof.az) - dof.abias[2]<NZ_AXIS_THRESHOLD){
-							handle_motion('Z', &data, &timer, &cur_state);
-							break;
-						}
-			//		pc.printf("%2f",dof.calcGyro(dof.gx) - dof.gbias[0]);
-			//    pc.printf(", ");
-			//    pc.printf("%2f",dof.calcGyro(dof.gy) - dof.gbias[1]);
-			//    pc.printf(", ");
-			//    pc.printf("%2f\n",dof.calcGyro(dof.gz) - dof.gbias[2]);
-			//		pc.printf("%2f",dof.calcAccel(dof.ax) - dof.abias[0]);
-			//    pc.printf(", ");
-			//    pc.printf("%2f",dof.calcAccel(dof.ay) - dof.abias[1]);
-			//    pc.printf(", ");
-			//    pc.printf("%2f\n",dof.calcAccel(dof.az) - dof.abias[2]);
 					}
-				}
 
-			}	
-		} 
-	} else if (mode == TEST) {
+				}
+			}
+		} else if (mode == TEST) {
 			Sensing::SensorReading sensorReading1;
 			Sensing::SensorReading sensorReading2;
 			Sensing::SensorReading sensorReading3;
@@ -203,25 +203,24 @@ int main(void) {
 				flexReader.Poll(&sensorReading5);
 				Sensing::averageReadings(&sensorReading1, &sensorReading2,
 					&sensorReading3, &sensorReading4, &sensorReading5, &sensorReadingAverage);
-				sensorReadingAverage.printify();
+					sensorReadingAverage.printify();
+				}
+			} else if (mode == IMUTEST){
+				while(1){
+					wait_ms(1000);
+					dof.readAccel();
+					dof.readGyro();
+					pc.printf("%2f",dof.calcGyro(dof.gx) - dof.gbias[0]);
+					pc.printf(", ");
+					pc.printf("%2f",dof.calcGyro(dof.gy) - dof.gbias[1]);
+					pc.printf(", ");
+					pc.printf("%2f\n",dof.calcGyro(dof.gz) - dof.gbias[2]);
+					pc.printf("%2f",dof.calcAccel(dof.ax) - dof.abias[0]);
+					pc.printf(", ");
+					pc.printf("%2f",dof.calcAccel(dof.ay) - dof.abias[1]);
+					pc.printf(", ");
+					pc.printf("%2f\n",dof.calcAccel(dof.az) - dof.abias[2]);
+				}
 			}
-		} else if (mode == IMUTEST){
-			while(1){
-				wait_ms(1000);
-				dof.readAccel();
-				dof.readGyro();
-				pc.printf("%2f",dof.calcGyro(dof.gx) - dof.gbias[0]);
-				pc.printf(", ");
-				pc.printf("%2f",dof.calcGyro(dof.gy) - dof.gbias[1]);
-				pc.printf(", ");
-				pc.printf("%2f\n",dof.calcGyro(dof.gz) - dof.gbias[2]);
-				pc.printf("%2f",dof.calcAccel(dof.ax) - dof.abias[0]);
-				pc.printf(", ");
-				pc.printf("%2f",dof.calcAccel(dof.ay) - dof.abias[1]);
-				pc.printf(", ");
-				pc.printf("%2f\n",dof.calcAccel(dof.az) - dof.abias[2]);
-			}
+			return 0;
 		}
-	return 0;
-}
-

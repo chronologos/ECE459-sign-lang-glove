@@ -3,7 +3,7 @@ import serial
 import time
 from subprocess import Popen, PIPE
 import threading
-
+from autocorrect import spell
 
 class InputMode:
     def __init__(self, port):
