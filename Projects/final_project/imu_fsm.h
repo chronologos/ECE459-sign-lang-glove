@@ -10,12 +10,13 @@ namespace ImuFsm {
  */
 typedef enum {
 	STATE_DEFAULT,
-	STATE_WAIT_GDZ,
+	STATE_WAIT_GDZQ,
 	STATE_WAIT_IJ,
 	FN_LAYER_ACTIVE, // When shift/function layer of glove is active
 	                 // analogous to when you hold down "shift" on a keyboard.
 	STATE_WAIT_5,
 	STATE_WAIT_A,
+	STATE_WAIT_MNSXT,
 	NUM_STATES 
 } state_t;
 
@@ -43,8 +44,8 @@ typedef struct {
 typedef state_t state_func_t(instance_data_t *data);
 // Dispatches keys in default layer.
 state_t do_state_default(instance_data_t *data);
-// Distinguishes between g, d, z
-state_t do_state_wait_gdz(instance_data_t *data);
+// Distinguishes between g, d, z, q
+state_t do_state_wait_gdzq(instance_data_t *data);
 // Distinguishes between i, j
 state_t do_state_wait_ij(instance_data_t *data);
 // Analogous to do_state_default, but dispatches keys in function layer.
@@ -53,14 +54,17 @@ state_t do_state_fn(instance_data_t *data);
 state_t do_state_wait_5(instance_data_t *data);
 // Distinguishes <shift> and a
 state_t do_state_wait_a(instance_data_t *data);
+// Distinguishes m, n, s, x and t using IMU
+state_t do_state_wait_mnsxt(instance_data_t *data);
 
 // STATE TXN TABLE:
 // MUST BE ORDERED IN CORRESPONDENCE WITH enum state_t
 state_func_t* const state_table[ NUM_STATES ] = {
   do_state_default,
-	do_state_wait_gdz, do_state_wait_ij, 
+	do_state_wait_gdzq, do_state_wait_ij, 
   do_state_fn,
-	do_state_wait_5, do_state_wait_a
+	do_state_wait_5, do_state_wait_a,
+	do_state_wait_mnsxt
 };
 
 // Transitions mealy machine state:

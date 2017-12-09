@@ -18,28 +18,30 @@ namespace ImuFsm {
 		// printf("prev key: %c\n", prev_key);
 		if (data->event == GESTURE_IN) {
 			char gesture = data->key.c_str()[0];
+			data->event=NOOP;
 			switch (gesture) {
 				case 'a':
-					data->event=NOOP;
 					return STATE_WAIT_A;
 				case '5':
-					data->event=NOOP;
 					return STATE_WAIT_5;
 				case 'g':
-					data->event=NOOP;
-					return STATE_WAIT_GDZ;
+					return STATE_WAIT_GDZQ;
 				case 'd':
-					data->event=NOOP;
-					return STATE_WAIT_GDZ;
+					return STATE_WAIT_GDZQ;
 				case 'z':
-					data->event=NOOP;
-					return STATE_WAIT_GDZ;
+					return STATE_WAIT_GDZQ;
+				case 'q':
+					return STATE_WAIT_GDZQ;
 				case 'i':
-					data->event=NOOP;
 					return STATE_WAIT_IJ;
 				case 'j':
-					data->event=NOOP;
 					return STATE_WAIT_IJ;
+				case 's':
+					return STATE_WAIT_MNSXT;
+				case 'x':
+					return STATE_WAIT_MNSXT;
+				case 't':
+					return STATE_WAIT_MNSXT;
 				default:
 					checkPrevKeyAndSet(data, &prev_key, data->key.c_str()[0]);
 					return STATE_DEFAULT;
@@ -48,7 +50,7 @@ namespace ImuFsm {
 		return STATE_DEFAULT;
 	}
 		
-	state_t do_state_wait_gdz(instance_data_t *data){
+	state_t do_state_wait_gdzq(instance_data_t *data){
 		if (data->event == MOTION_IN) {
 			char motion = data->key.c_str()[0];
 			// this is REPEAT -> replay prev_key.
@@ -58,6 +60,10 @@ namespace ImuFsm {
 					checkPrevKeyAndSet(data, &prev_key, 'g');      
 			 } else if (motion == 'X'){
 				  checkPrevKeyAndSet(data, &prev_key, 'd');
+			 } else if (motion == 'Y'){
+				  checkPrevKeyAndSet(data, &prev_key, 'z');
+			 } else if (motion == 'x'){
+				  checkPrevKeyAndSet(data, &prev_key, 'q');
 			 }
 	  }
 		return STATE_DEFAULT;
@@ -177,6 +183,24 @@ namespace ImuFsm {
 			 }
 	  }
 		return STATE_DEFAULT;
+	}
+
+	state_t do_state_wait_mnsxt(instance_data_t *data) {
+		if (data->event == MOTION_IN) {
+			char motion = data->key.c_str()[0];
+			if (motion == 'Z') {
+					data->event = KEY_OUT;
+				  data->key = "x";
+		  } else if (motion == 'y'){
+					data->event = KEY_OUT;
+				  data->key = "t";
+
+			} else if (motion == 'Y'){
+					data->event = KEY_OUT;
+				  data->key = "s";
+			}
+		}
+	return STATE_DEFAULT;
 	}
 
 	state_t run_state( state_t cur_state, instance_data_t *data ) {
