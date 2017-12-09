@@ -3,8 +3,12 @@
 #include <vector>
 #include <iostream>
 
+const int ADC_MAX = 3900;
+const int ADC_MIN = 100;
+
 bool DEBUG = false;
 namespace Sensing {
+	
 	void averageReadings(
 	SensorReading* srp1, SensorReading* srp2, 
 	SensorReading* srp3, SensorReading* srp4, 
@@ -16,25 +20,23 @@ namespace Sensing {
 		avg->finger4 = (srp1->finger4 + srp2->finger4 + srp3->finger4 + srp4->finger4 + srp5->finger4) / 5;
 		avg->palm = (srp1->palm + srp2->palm + srp3->palm + srp4->palm + srp5->palm) / 5;
 	}
+	
 	FlexSensorReader::FlexSensorReader() {
-		/* 
-		 *
-		 */
 		keys.reserve(40);
-		//keys.push_back(SensorReading(1563, 2297, 1272, 631, 1206, 2007, "1", 1)); d
+		//keys.push_back(SensorReading(1563, 2297, 1272, 631, 1206, 2007, "1", 1)); g
 		//keys.push_back(SensorReading(1523, 2363, 2071, 1230, 1272, 1894, "2", 1)); k
 		keys.push_back(SensorReading(1832, 2299, 2025, 564, 1682, 2135, "3", 1));
 		//keys.push_back(SensorReading(1078, 2316, 2045, 1177, 2001, 2311, "4", 1)); b
 	  keys.push_back(SensorReading(1683, 1980, 1922, 1004, 1757, 2208, "5", 1));
 		//keys.push_back(SensorReading(1379, 2272, 2021, 1056, 1293, 1903, "6", 1)); w
 		keys.push_back(SensorReading(1322, 2585, 1950, 550, 1942, 2058, "7", 1));
-		keys.push_back(SensorReading(1318, 3454, 1150, 1027, 1964, 2222, "8", 1));
-		keys.push_back(SensorReading(1470, 1069, 2043, 1201, 2002, 2328, "9", 1));
+		keys.push_back(SensorReading(1337, 2299, 1125, 1161, 2032, 2293, "8", 1));
+		//keys.push_back(SensorReading(1470, 1069, 2043, 1201, 2002, 2328, "9", 1)); f
 
-		keys.push_back(SensorReading(1281, 1256, 1128, 559, 954, 2048, "a", 0));
+		keys.push_back(SensorReading(1585, 1122, 1373, 612, 1086, 2158, "a", 0));
 		keys.push_back(SensorReading(1829, 1856, 1974, 1152, 1985, 2126, "b", 0));	
 		keys.push_back(SensorReading(1477, 1475, 1151, 617, 2026, 2176, "c", 0));
-		keys.push_back(SensorReading(1886, 1914, 1106, 546, 1927, 1509, "d", 0));
+		keys.push_back(SensorReading(1330, 2284, 1194, 570, 1169, 1837, "d", 0));
 		keys.push_back(SensorReading(1105, 1106, 1099, 516, 1651, 2068, "e", 0));
 		keys.push_back(SensorReading(1387, 1382, 2074, 1240, 2012, 2238, "f", 0));
 		keys.push_back(SensorReading(1820, 1829, 1254, 587, 1085, 1779, "g", 0));
@@ -70,13 +72,13 @@ namespace Sensing {
 				best_key = keys[i].key;
 			}
 		}
-		// printf("%d",min_score);
+		if (DEBUG) printf("%d",min_score);
 		return best_key;
 	}
 
 	int FlexSensorReader::Poll(struct SensorReading* flex_reading){
 		uint32_t adc_channels[6] = {16u,8u,4u, 2u, 1u, 32u};
-		for (int i = 0; i < sizeof(adc_channels); ++i){
+		for (int i = 0; i < 6; i++){
 			LPC_ADC->ADCR=adc_channels[i]; //set to run on channel x
 			ADCSetup();
 			StartConversion();
@@ -84,6 +86,10 @@ namespace Sensing {
 			wait_ms(20);
 			EndConversion();
 			uint16_t raw_data = ExtractData();
+			if (raw_data > ADC_MAX || raw_data < ADC_MIN){
+				printf("Polling error! raw data %d for finger %d \n", raw_data, i);
+				return 1;
+			}
 			// pinky p15(1u), ring p16(2u), middle p17(4u), 
 			// pointer p18(8u), thumb p19(16u). palm p20(32u)
 			if (i==0){
@@ -105,7 +111,7 @@ namespace Sensing {
 				flex_reading->palm = raw_data;
 				if (DEBUG) printf("palm: raw_data: %d\n\n", raw_data);
 			} else {
-				return 1;
+				return 0;
 			}
 		}
 		return 0;

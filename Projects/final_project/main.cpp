@@ -56,8 +56,12 @@ int main(void) {
 	// Outer loop: poll and look for consensus.
 	if (mode == NORMAL){
 		while (1){
-			wait_ms(200);
-			flexReader.Poll(&sensorReading);
+			wait_ms(250);
+			int res = flexReader.Poll(&sensorReading);
+			while (res != 0) {
+				printf("Polling error!\n");
+				res = flexReader.Poll(&sensorReading);
+			}
 			string candidate = flexReader.Convert(&sensorReading);
 			string result = "";
 			Consensus::consensus_queue.push_back(candidate);
@@ -78,11 +82,10 @@ int main(void) {
 					print_key_out(&data);
 				}
 				// We turn on IMU if we are in a state that requires IMU data.
-				else if (cur_state == ImuFsm::STATE_WAIT_AY_Q 
-							|| cur_state == ImuFsm::STATE_WAIT_AY_G
-							|| cur_state == ImuFsm::STATE_WAIT_AX
-							|| cur_state == ImuFsm::STATE_WAIT_GZ
-			       	|| cur_state == ImuFsm::STATE_WAIT_5) {
+				else if (cur_state == ImuFsm::STATE_WAIT_IJ
+							|| cur_state == ImuFsm::STATE_WAIT_GDZ
+			       	|| cur_state == ImuFsm::STATE_WAIT_5
+				      || cur_state == ImuFsm::STATE_WAIT_A) {
 					timer.start();
 					while (1){
 						dof.readAccel();
@@ -110,7 +113,7 @@ int main(void) {
 						}
 						else if(dof.calcGyro(dof.gx) - dof.gbias[2]>J_GZ_THRESHOLD){ //TODO(iantay) change to gz
 							data.event = ImuFsm::MOTION_IN;
-							data.key = 'z';
+							data.key = 'c';
 							cur_state = ImuFsm::run_state(cur_state, &data);
 							pc.printf("j motion detected.\n");
 							if (data.event == ImuFsm::KEY_OUT){
