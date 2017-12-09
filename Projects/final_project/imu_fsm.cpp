@@ -1,7 +1,7 @@
 #include "imu_fsm.h"
 
 namespace ImuFsm {
-	
+	char digits[] = "0123456789";
 	void checkPrevKeyAndSet(instance_data_t *data, char *prev_key, char key) {
 		if (*prev_key == key){
 			data->event = NOOP;
@@ -36,6 +36,10 @@ namespace ImuFsm {
 					return STATE_WAIT_IJ;
 				case 'j':
 					return STATE_WAIT_IJ;
+				case 'm':
+					return STATE_WAIT_MNSXT;
+				case 'n':
+					return STATE_WAIT_MNSXT;
 				case 's':
 					return STATE_WAIT_MNSXT;
 				case 'x':
@@ -43,6 +47,12 @@ namespace ImuFsm {
 				case 't':
 					return STATE_WAIT_MNSXT;
 				default:
+					// Ignore digits, they are in function layer.
+					for (int i = 0; i < 10; ++i){
+						if (digits[i] == gesture){
+							break;
+						}
+					}
 					checkPrevKeyAndSet(data, &prev_key, data->key.c_str()[0]);
 					return STATE_DEFAULT;
 			 }
@@ -120,12 +130,28 @@ namespace ImuFsm {
 				  real_key = '2';
 					prev_key = real_key;
 					break;
+				case '3':
+					real_key = '3';
+					prev_key = real_key;
+					break;
 				case 'b':
 				  real_key = '4';
 					prev_key = real_key;
 					break;
+				case '5':
+					real_key = '5';
+					prev_key = real_key;
+					break;
 				case 'w':
 				  real_key = '6';
+					prev_key = real_key;
+					break;
+				case '7':
+					real_key = '7';
+					prev_key = real_key;
+					break;
+				case '8':
+					real_key = '8';
 					prev_key = real_key;
 					break;
 				case 'f':
@@ -189,15 +215,20 @@ namespace ImuFsm {
 		if (data->event == MOTION_IN) {
 			char motion = data->key.c_str()[0];
 			if (motion == 'Z') {
-					data->event = KEY_OUT;
-				  data->key = "x";
-		  } else if (motion == 'y'){
-					data->event = KEY_OUT;
-				  data->key = "t";
-
+				data->event = KEY_OUT;
+				data->key = "x";
+		  } else if (motion == 'z'){
+				data->event = KEY_OUT;
+				data->key = "n";
+			} else if (motion == 'y'){
+				data->event = KEY_OUT;
+				data->key = "t";
 			} else if (motion == 'Y'){
-					data->event = KEY_OUT;
-				  data->key = "s";
+				data->event = KEY_OUT;
+				data->key = "s";
+			} else {
+				data->event = KEY_OUT;
+				data->key = "m";
 			}
 		}
 	return STATE_DEFAULT;

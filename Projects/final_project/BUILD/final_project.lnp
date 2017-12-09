@@ -1,6 +1,7 @@
 --cpu Cortex-M3
 ".\build\flex_sensor.o"
 ".\build\main.o"
+".\build\imu_fsm.o"
 ".\build\example.o"
 ".\build\i2cdev.o"
 ".\build\lsm9ds0.o"

@@ -69,3 +69,7 @@
 .\build\main.o: mbed/./sleep_api.h
 .\build\main.o: mbed/./rtc_time.h
 .\build\main.o: flex_sensor.h
+.\build\main.o: LSM9DS0/LSM9DS0.h
+.\build\main.o: LSM9DS0/I2Cdev.h
+.\build\main.o: consensus.h
+.\build\main.o: imu_fsm.h
