@@ -75,7 +75,7 @@ namespace ImuFsm {
 			// this is REPEAT -> replay prev_key.
 			if (motion == 'X') {
 				checkPrevKeyAndSet(data, &prev_key, 'i');
-			 } else if (motion == 'c'){
+			 } else { //TODO(iantay) should use more specific motion.
 					checkPrevKeyAndSet(data, &prev_key, 'j');
 			 }
 	  }

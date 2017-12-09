@@ -11,7 +11,7 @@ namespace Consensus {
  * by multiple polls of a gesture.
  */
 	
-const int CONSENSUS_N = 10;
+const int CONSENSUS_N = 4;
 std::vector<string> consensus_queue;
 
 void emptyQueue(){
