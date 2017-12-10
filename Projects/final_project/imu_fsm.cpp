@@ -2,7 +2,7 @@
 
 namespace ImuFsm {
 	char digits[] = "0123456789";
-	
+	bool repeated = false;
 	void checkPrevKeyAndSetAnother(instance_data_t *data, char *prev_key, 
 		                             char set, char prev) {
 			if (*prev_key == prev){
@@ -29,13 +29,13 @@ namespace ImuFsm {
 				case '5':
 					return STATE_WAIT_5;
 				case 'g':
-					return STATE_WAIT_GDZQ;
+					return STATE_WAIT_GQ;
 				case 'd':
-					return STATE_WAIT_GDZQ;
+					return STATE_WAIT_DZ;
 				case 'z':
-					return STATE_WAIT_GDZQ;
+					return STATE_WAIT_DZ;
 				case 'q':
-					return STATE_WAIT_GDZQ;
+					return STATE_WAIT_GQ;
 				case 'i':
 					return STATE_WAIT_IJ;
 				case 'j':
@@ -59,11 +59,19 @@ namespace ImuFsm {
 					return STATE_WAIT_CO;
 				case 'o': 
 					return STATE_WAIT_CO;
+				case 'h': 
+					return STATE_WAIT_HU;
+				case 'u': 
+					return STATE_WAIT_HU;
+				case 'p': 
+					return STATE_WAIT_PK;
+				case 'k': 
+					return STATE_WAIT_PK;
 				default:
 				// Ignore digits, they are in function layer.
 				for (int i = 0; i < 10; ++i){
 					if (digits[i] == gesture){
-						break;
+						return STATE_DEFAULT;
 					}
 				}
 				checkPrevKeyAndSet(data, &prev_key, data->key);
@@ -73,17 +81,25 @@ namespace ImuFsm {
 		return STATE_DEFAULT;
 	}
 
-	state_t do_state_wait_gdzq(instance_data_t *data){
+	state_t do_state_wait_gq(instance_data_t *data){
 		if (data->event == MOTION_IN) {
 			char motion = data->key;
 			if (motion == 'y') {
 				checkPrevKeyAndSet(data, &prev_key, 'g');
-			} else if (motion == 'X'){
-				checkPrevKeyAndSet(data, &prev_key, 'd');
 			} else if (motion == 'Z'){
-				checkPrevKeyAndSet(data, &prev_key, 'z');
-			} else if (motion == 'x'){
 				checkPrevKeyAndSet(data, &prev_key, 'q');
+			}
+		}
+		return STATE_DEFAULT;
+	}
+	
+	state_t do_state_wait_dz(instance_data_t *data){
+		if (data->event == MOTION_IN) {
+			char motion = data->key;
+			if (motion == 'X') {
+				checkPrevKeyAndSet(data, &prev_key, 'd');
+			} else if (motion == 'y'){
+				checkPrevKeyAndSet(data, &prev_key, 'z');
 			}
 		}
 		return STATE_DEFAULT;
@@ -92,10 +108,10 @@ namespace ImuFsm {
 	state_t do_state_wait_ij(instance_data_t *data){
 		if (data->event == MOTION_IN) {
 			char motion = data->key;
-			if (motion == 'X') {
-				checkPrevKeyAndSet(data, &prev_key, 'i');
-			} else { //TODO(iantay) should use more specific motion.
+			if (motion == 'g') {
 				checkPrevKeyAndSet(data, &prev_key, 'j');
+			} else if (motion == 'X') { 
+				checkPrevKeyAndSet(data, &prev_key, 'i');
 			}
 		}
 		return STATE_DEFAULT;
@@ -107,6 +123,9 @@ namespace ImuFsm {
 			switch (gesture) {
 				case 'g':
 					checkPrevKeyAndSetAnother(data, &prev_key, '1', 'g');
+					return STATE_DEFAULT;
+				case '1':
+					checkPrevKeyAndSetAnother(data, &prev_key, '1', '1');
 					return STATE_DEFAULT;
 				case 'd':
 					checkPrevKeyAndSetAnother(data, &prev_key, '1', 'd');
@@ -163,16 +182,26 @@ namespace ImuFsm {
 			char motion = data->key;
 			// this is REPEAT -> replay prev_key.
 			if (motion == 'y') {
+				if (repeated){
+					wait_ms(300);
+					repeated = false;
+					data->event = NOOP;
+					return STATE_DEFAULT;
+				}
+				repeated = true;
 				// printf("prev key is %c\n", prev_key);
 				printf("REPEAT ACTIVATED\n");
 				data->event = KEY_OUT;
 				data->key = prev_key;
 			} else if (motion == 'z'){
-					checkPrevKeyAndSet(data, &prev_key, 0x20);
+					checkPrevKeyAndSet(data, &prev_key, 0x20); // SPACE
 			} else if (motion == 'Z'){ // BACKSPACE
 				data->event = KEY_OUT;
-				data->key = 0x08;
-			}	
+				data->key = '!';
+			} else {
+				data->event = NOOP;
+				prev_key = '.';
+			}				
 		}
 		return STATE_DEFAULT;
 	}
@@ -222,6 +251,31 @@ namespace ImuFsm {
 		}
 		return STATE_DEFAULT;
 	}
+		
+		state_t do_state_wait_hu(instance_data_t *data) {
+		if (data->event == MOTION_IN) {
+			char motion = data->key;
+			if (motion == 'y') {
+				checkPrevKeyAndSet(data, &prev_key, 'h');
+			} else {
+				checkPrevKeyAndSet(data, &prev_key, 'u');
+			}
+		}
+		return STATE_DEFAULT;
+	}
+		
+	state_t do_state_wait_pk(instance_data_t *data) {
+		if (data->event == MOTION_IN) {
+			char motion = data->key;
+			if (motion == 'Z') {
+				checkPrevKeyAndSet(data, &prev_key, 'p');
+			} else {
+				checkPrevKeyAndSet(data, &prev_key, 'k');
+			}
+		}
+		return STATE_DEFAULT;
+	}
+
 
 	state_t run_state( state_t cur_state, instance_data_t *data ) {
 		return state_table[ cur_state ]( data );

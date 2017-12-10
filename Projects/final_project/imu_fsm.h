@@ -11,7 +11,7 @@ namespace ImuFsm {
 	
 	typedef enum {
 		STATE_DEFAULT,
-		STATE_WAIT_GDZQ,
+		STATE_WAIT_GQ,
 		STATE_WAIT_IJ,
 		FN_LAYER_ACTIVE, // When shift/function layer of glove is active
 		// analogous to when you hold down "shift" on a keyboard.
@@ -19,6 +19,9 @@ namespace ImuFsm {
 		STATE_WAIT_A,
 		STATE_WAIT_SXT,
 		STATE_WAIT_CO,
+		STATE_WAIT_HU,
+		STATE_WAIT_PK,
+		STATE_WAIT_DZ,
 		NUM_STATES
 	} state_t;
 
@@ -48,7 +51,7 @@ namespace ImuFsm {
 	// Dispatches keys in default layer.
 	state_t do_state_default(instance_data_t *data);
 	// Distinguishes between g, d, z, q
-	state_t do_state_wait_gdzq(instance_data_t *data);
+	state_t do_state_wait_gq(instance_data_t *data);
 	// Distinguishes between i, j
 	state_t do_state_wait_ij(instance_data_t *data);
 	// Analogous to do_state_default, but dispatches keys in function layer.
@@ -61,15 +64,24 @@ namespace ImuFsm {
 	state_t do_state_wait_sxt(instance_data_t *data);
 	// Distinguishes c and o using IMU
 	state_t do_state_wait_co(instance_data_t *data);
+	// Distinguishes h and u using IMU
+	state_t do_state_wait_hu(instance_data_t *data);
+	// Distinguishes p and k using IMU
+	state_t do_state_wait_pk(instance_data_t *data);
+	
+	state_t do_state_wait_dz(instance_data_t *data);
+
 	
 	// STATE TXN TABLE:
 	// MUST BE ORDERED IN CORRESPONDENCE WITH enum state_t
 	state_func_t* const state_table[ NUM_STATES ] = {
 		do_state_default,
-		do_state_wait_gdzq, do_state_wait_ij,
+		do_state_wait_gq, do_state_wait_ij,
 		do_state_fn,
 		do_state_wait_5, do_state_wait_a,
-		do_state_wait_sxt, do_state_wait_co
+		do_state_wait_sxt, do_state_wait_co,
+		do_state_wait_hu, do_state_wait_pk,
+		do_state_wait_dz
 	};
 
 	// Transitions mealy machine state:
