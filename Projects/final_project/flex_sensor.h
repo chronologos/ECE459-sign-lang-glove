@@ -24,13 +24,12 @@ namespace Sensing {
 		int finger4;
 		int palm;
 		std::string key;
-		int in_fn_layer;
 
 		SensorReading(int t, int f1, int f2, int f3, int f4, int p,
-			std::string k, int in_fn_layer) :
+			std::string k) :
 			thumb(t), finger1(f1), finger2(f2), 
 			finger3(f3), finger4(f4), palm(p),
-			key(k), in_fn_layer(in_fn_layer) {}
+			key(k) {}
 
 			SensorReading() {}
 
@@ -41,7 +40,7 @@ namespace Sensing {
 			int distance_from_key (const SensorReading &o) const{
 				int dist = sqrt(double(min_dist(thumb,o.thumb) + min_dist(finger1,o.finger1) +
 				min_dist(finger2,o.finger2) + min_dist(finger3,o.finger3) +
-				min_dist(finger4,o.finger4) + 5*min_dist(palm,o.palm)));
+				min_dist(finger4,o.finger4) + 3*min_dist(palm,o.palm)));
 				//TODO(iantay) THIS IS A WORKAROUND FOR OUR PALM SENSOR's LOW RANGE
 				return dist;
 			}
