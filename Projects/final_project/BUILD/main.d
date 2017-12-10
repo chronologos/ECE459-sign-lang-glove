@@ -73,3 +73,4 @@
 .\build\main.o: LSM9DS0/I2Cdev.h
 .\build\main.o: consensus.h
 .\build\main.o: imu_fsm.h
+.\build\main.o: util.h

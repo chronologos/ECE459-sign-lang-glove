@@ -5,6 +5,7 @@
 #include "LSM9DS0/LSM9DS0.h"
 #include "consensus.h"
 #include "imu_fsm.h"
+#include "util.h"
 
 #define LSM9DS0_XM  0x1D // Would be 0x1E if SDO_XM is LOW
 #define LSM9DS0_G   0x6B // Would be 0x6A if SDO_G is LOW
@@ -13,29 +14,32 @@ const float X_AXIS_THRESHOLD = 0.8;
 const float NX_AXIS_THRESHOLD = -0.8;
 const float Y_AXIS_THRESHOLD = 0.8;
 const float NY_AXIS_THRESHOLD = -0.8;
-const float Z_AXIS_THRESHOLD = 0.80;
-const float NZ_AXIS_THRESHOLD = -0.80;
-// const float G_Y_AXIS_THRESHOLD = 0.8;
+const float Z_AXIS_THRESHOLD = 0.8;
+const float NZ_AXIS_THRESHOLD = -0.8;
 const int TIMEOUT_MS = 350;
+const bool DEBUG = false;
+
 AnalogIn adcin1(p15), adcin2(p16), adcin3(p17), adcin4(p18), adcin5(p19), adcin6(p20);
 DigitalOut led1(LED1), led2(LED2), led3(LED3);
 Serial pc(USBTX,USBRX); //tx, rx
 Serial bt(p28, p27);
 LSM9DS0 dof(p9, p10,LSM9DS0_G, LSM9DS0_XM);
 Timer timer;
-string prev_key = "";
-
+char digits[] = "0123456789";
 typedef enum ModeT {
 	NORMAL,
 	TEST,
 	IMUTEST
 } ModeT;
 
-ModeT mode = IMUTEST;
+ModeT mode = NORMAL;
 
 void print_key_out(ImuFsm::instance_data_t *data){
-	prev_key = data->key;
-	pc.printf("result: %s\n", data->key.c_str());
+	pc.printf("result: %c\n", data->key);
+	bt.printf("%c", data->key);
+	if (contains(digits, data->key, 10)){
+		wait_ms(500); //TODO
+	}
 }
 
 // Mutates fsm state, timer and data manipulation when motion is detected.
@@ -43,7 +47,7 @@ void handle_motion(char motion, ImuFsm::instance_data_t *data, Timer* timer, Imu
 	data->event = ImuFsm::MOTION_IN;
 	data->key = motion;
 	*cur_state = ImuFsm::run_state(*cur_state, data);
-	pc.printf("%c axis motion detected.\n", motion);
+	if (DEBUG) pc.printf("%c axis motion detected.\n", motion);
 	if (data->event == ImuFsm::KEY_OUT){
 		print_key_out(data);
 	}
@@ -70,11 +74,17 @@ int main(void) {
 	// Outer loop: poll and look for consensus.
 	if (mode == NORMAL){
 		while (1){
-			wait_ms(100);
+			wait_ms(50);
 			int res = flexReader.Poll(&sensorReading);
 			while (res != 0) {
+				led1 = 1;
+				led2 = 1;
+				led3 = 1;
 				res = flexReader.Poll(&sensorReading);
 			}
+			led1 = 0;
+			led2 = 0;
+			led3 = 0;
 			string candidate = flexReader.Convert(&sensorReading);
 			string result = "";
 			Consensus::consensus_queue.push_back(candidate);
@@ -85,7 +95,7 @@ int main(void) {
 				// Outputs go out thru ImuFsm::instance_data_t data as well.
 				result = Consensus::getConsensusAndClear();
 				data.event = ImuFsm::GESTURE_IN;
-				data.key = result;
+				data.key = result.c_str()[0];
 				cur_state = ImuFsm::run_state(cur_state, &data);
 				sensorReading.printify();
 				//cur_state = ImuFsm::STATE_WAIT_AX ; TODO(iantay) remove these debug stmts
@@ -94,7 +104,7 @@ int main(void) {
 				if (data.event == ImuFsm::KEY_OUT){
 					print_key_out(&data);
 				}
-				else if (cur_state == ImuFsm::STATE_WAIT_MNSXT) {
+				else if (cur_state == ImuFsm::STATE_WAIT_SXT) {
 					timer.start();
 					while (1){
 						dof.readAccel();
@@ -105,7 +115,7 @@ int main(void) {
 							timer.stop();
 							timer.reset();
 							cur_state = ImuFsm::run_state(cur_state, &data);
-							printf("timeout\n");
+							if (DEBUG) printf("timeout\n");
 							break;
 						}
 						else if(dof.calcAccel(dof.ay)-dof.abias[1]>Y_AXIS_THRESHOLD/2){
@@ -120,7 +130,7 @@ int main(void) {
 							handle_motion('Z', &data, &timer, &cur_state);
 							break;
 						}
-						else if(dof.calcAccel(dof.az)-dof.abias[2]>Z_AXIS_THRESHOLD/3){
+						else if(dof.calcAccel(dof.az)-dof.abias[2]>Z_AXIS_THRESHOLD/2){
 							handle_motion('z', &data, &timer, &cur_state);
 							break;
 						}
@@ -130,7 +140,8 @@ int main(void) {
 				else if (cur_state == ImuFsm::STATE_WAIT_IJ
 					|| cur_state == ImuFsm::STATE_WAIT_GDZQ
 					|| cur_state == ImuFsm::STATE_WAIT_5
-					|| cur_state == ImuFsm::STATE_WAIT_A) {
+					|| cur_state == ImuFsm::STATE_WAIT_A
+				  || cur_state == ImuFsm::STATE_WAIT_CO) {
 						timer.start();
 						while (1){
 							dof.readAccel();
@@ -141,7 +152,7 @@ int main(void) {
 								timer.stop();
 								timer.reset();
 								cur_state = ImuFsm::run_state(cur_state, &data);
-								printf("timeout\n");
+								if (DEBUG) printf("timeout\n");
 								break;
 							}
 							else if(dof.calcAccel(dof.ay)-dof.abias[1]>Y_AXIS_THRESHOLD){

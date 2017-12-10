@@ -8,6 +8,7 @@ namespace ImuFsm {
 	/* This module contains code implementing a mealy machine that we use to synthesize
 	* our different sensor inputs.
 	*/
+	
 	typedef enum {
 		STATE_DEFAULT,
 		STATE_WAIT_GDZQ,
@@ -16,7 +17,8 @@ namespace ImuFsm {
 		// analogous to when you hold down "shift" on a keyboard.
 		STATE_WAIT_5,
 		STATE_WAIT_A,
-		STATE_WAIT_MNSXT,
+		STATE_WAIT_SXT,
+		STATE_WAIT_CO,
 		NUM_STATES
 	} state_t;
 
@@ -33,11 +35,12 @@ namespace ImuFsm {
 	*/
 	typedef struct {
 		event_t event;
-		string key; // populated with gesture name if event=GESTURE,
+		char key; // populated with gesture name if event=GESTURE,
 		// populated with key pressed if event=RETURN_KEY
 		// otherwise empty.
 		// Gesture name notation: x,y,z (positive XM), X,Y,Z (negative XM),
 		// a,b,c and A,B,C for gyro
+		char aux; // For m and n disambiguation.
 	}	instance_data_t;
 
 	// STATE TXN FUNCTIONS:
@@ -54,9 +57,11 @@ namespace ImuFsm {
 	state_t do_state_wait_5(instance_data_t *data);
 	// Distinguishes <shift> and a
 	state_t do_state_wait_a(instance_data_t *data);
-	// Distinguishes m, n, s, x and t using IMU
-	state_t do_state_wait_mnsxt(instance_data_t *data);
-
+	// Distinguishes s, x and t using IMU
+	state_t do_state_wait_sxt(instance_data_t *data);
+	// Distinguishes c and o using IMU
+	state_t do_state_wait_co(instance_data_t *data);
+	
 	// STATE TXN TABLE:
 	// MUST BE ORDERED IN CORRESPONDENCE WITH enum state_t
 	state_func_t* const state_table[ NUM_STATES ] = {
@@ -64,7 +69,7 @@ namespace ImuFsm {
 		do_state_wait_gdzq, do_state_wait_ij,
 		do_state_fn,
 		do_state_wait_5, do_state_wait_a,
-		do_state_wait_mnsxt
+		do_state_wait_sxt, do_state_wait_co
 	};
 
 	// Transitions mealy machine state:
