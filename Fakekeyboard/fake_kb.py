@@ -4,6 +4,41 @@ import time
 from subprocess import Popen, PIPE
 import threading
 from autocorrect import spell
+import math
+
+# Dynamic programming approach to min distance between strings
+def editDistDP(str1, str2):
+    m = len(str1)
+    n = len(str2)
+# Create a table to store results of subproblems
+    dp = [[0 for x in range(n+1)] for x in range(m+1)]
+
+# Fill d[][] in bottom up manner
+    for i in range(m+1):
+        for j in range(n+1):
+
+        # If first string is empty, only option is to
+        # isnert all characters of second string
+            if i == 0:
+                dp[i][j] = j # Min. operations = j
+
+        # If second string is empty, only option is to
+        # remove all characters of second string
+            elif j == 0:
+                dp[i][j] = i # Min. operations = i
+
+        # If last characters are same, ignore last char
+        # and recur for remaining string
+            elif str1[i-1] == str2[j-1]:
+                dp[i][j] = dp[i-1][j-1]
+
+        # If last character are different, consider all
+        # possibilities and find minimum
+            else:
+                dp[i][j] = 1 + min(dp[i][j-1],	 # Insert
+                            dp[i-1][j],	 # Remove
+                            dp[i-1][j-1]) # Replace
+    return dp[m][n]
 
 class InputMode:
     def __init__(self, port, autocorrect):
@@ -43,44 +78,54 @@ class TestMode:
         self.buffer = ""
         self.bt = serial.Serial(port, 9600)
         self.wrong = 0
-        self.total = 0
+        self.charLen = 0
+        self.totalWrong = 0
+        self.totalLen = 0
         self.done = False
         self.username = username
         self.autocorrect_on = autocorrect
         # self.test = ["test\n" for i in range(0,10)]
 
     def runReader(self):
+        input("READY: press start!\n")
         while (1):
-            print("read")
+            # print("read")
             # c = self.test.pop()
             c = self.bt.read().decode("utf-8")
-            if self.autocorrect_on:
-                c_prime = spell(c)
-                if c_prime != c:
-                    print("autocorrect corrected {0} to {1}".format(c,c_prime))
-                    c = c_prime
+
             self.item = c
             print(c)
             self.buffer += c
 
-            if "\n" in self.buffer:
-                actual = self.buffer.split("\n")[0]
-                ideal = input("expected word was: ")
+            if " " in self.buffer:
+                ideal = input("Enter expected word: ")
+                actual = self.buffer.split(" ")[0]
+                if self.autocorrect_on:
+                    actual_prime = spell(actual)
+                    if actual_prime != actual:
+                        print("autocorrect corrected {0} to {1}".format(actual,actual_prime))
+                        actual = actual_prime
+
+
                 self.buffer = ""
-                if actual != ideal:
-                    self.wrong += 1
-                self.total += 1
-                if self.total == 10:
-                    print(
-                        "job's done, total = {0}, wrong = {1}".format(
-                            self.total, self.wrong))
-                    self.done = True
-            if self.done:
-                with open("results.txt", "w+") as f:
-                    f.write(
-                        "{0}: {1} wrong {2} total {3} % correct".format(
-                            self.username, self.wrong, self.total, float(self.total-self.wrong)/float(self.total)))
-                return
+                self.wrong=editDistDP(ideal, actual)
+                self.totalWrong += self.wrong
+                self.charLen = len(ideal)
+                if not len(ideal):
+                    self.charLen = 1 #TODO
+                self.totalLen += self.charLen
+                print(
+                        "When signing {0}, {1} percent accuracy. Overall {2} percent accuracy for {3} chars signed".format(ideal,
+                            (1 - abs(self.wrong/self.charLen))*100, (1 - abs(self.totalWrong/self.totalLen))*100, self.totalLen))
+                self.done = True
+                input("press start!\n")
+                self.bt.reset_input_buffer()
+            # if self.done:
+            #     with open("results.txt", "w+") as f:
+            #         f.write(
+            #             "{0}: {1} wrong {2} total {3} % correct".format(
+            #                 self.username, self.wrong, self.total, float(self.total-self.wrong)/float(self.total)))
+            #     return
 
 
 def sendKey(key):
@@ -103,7 +148,8 @@ def run():
                 + "\n testopts: username")
         return
     port = sys.argv[1]
-    autocorrect = if "true" == sys.argv[2] then True else False
+    autocorrect = True if ("true" == sys.argv[2]) else False
+    print("autocorrect is {0}".format(str(autocorrect)))
     mode = sys.argv[3]
     if mode == "INPUT":
         t = InputMode(port, autocorrect)
