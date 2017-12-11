@@ -27,18 +27,23 @@ Project File Date:  12/09/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 2 (build 183)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'final_project'
-compiling imu_fsm.cpp...
+compiling main.cpp...
+util.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif /* UTIL_H */
+main.cpp(20): warning:  #177-D: variable "Z_GY_THRESHOLD" was declared but never referenced
+  const float Z_GY_THRESHOLD = 80;
+main.cpp: 2 warnings, 0 errors
 linking...
-Program Size: Code=50248 RO-data=5052 RW-data=192 ZI-data=8516  
+Program Size: Code=50244 RO-data=5052 RW-data=192 ZI-data=8516  
 After Build - User command #1: fromelf --bin -o E:\final_project.bin .\BUILD\final_project.axf
-".\BUILD\final_project.axf" - 0 Error(s), 0 Warning(s).
+".\BUILD\final_project.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   C:\Users\yt61\Documents\GitHub\ECE459-sign-lang-glove\Projects\final_project\RTE
   C:\Keil_v5\ARM\PACK\Keil\LPC1700_DFP\2.2.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

@@ -41,11 +41,11 @@ void print_key_out(ImuFsm::instance_data_t *data){
 	bt.printf("%c", data->key);
 	// digits have bad intermediate states (fn layer)
 	if (contains(digits, data->key, 10)){
-		wait_ms(300); //TODO
+		wait_ms(100); //TODO
 	}
 	// letters with bad intermediate states
 	if (contains("ijzgexo", data->key, 10)){
-		wait_ms(300); //TODO
+		wait_ms(100); //TODO
 	}
 }
 

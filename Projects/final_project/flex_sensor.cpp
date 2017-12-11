@@ -32,33 +32,33 @@ namespace Sensing {
 			keys.push_back(SensorReading(1194, 1714, 1708, 517, 1889, 718, "7"));
 			keys.push_back(SensorReading(1181, 1206, 1198, 1121, 2001, 747, "8"));
 			//keys.push_back(SensorReading(1470, 1069, 2043, 1201, 2002, 2328, "9", 1)); f
-
-			keys.push_back(SensorReading(1398, 860, 1167, 576, 852, 791, "a"));
-			keys.push_back(SensorReading(1014, 1248, 2038, 1140, 1892, 838, "b"));
-			keys.push_back(SensorReading(1643, 907, 1148, 608, 1291, 768, "c"));
-			keys.push_back(SensorReading(1442, 1320, 1084, 526, 892, 716, "d"));
-			keys.push_back(SensorReading(903, 814, 1056, 514, 835, 676, "e"));
-			keys.push_back(SensorReading(1198, 950, 2129, 1197, 1843, 784, "f"));
-			keys.push_back(SensorReading(1408, 1060, 1196, 541, 1922, 739, "g"));
-			keys.push_back(SensorReading(984, 1067, 1890, 579, 756, 671, "h"));
-			keys.push_back(SensorReading(1006, 846, 1257, 520, 1786, 725, "i"));
-			keys.push_back(SensorReading(1138, 893, 1228, 541, 1427, 719, "j"));
-			keys.push_back(SensorReading(1320, 1334, 1867, 555, 656, 736, "k"));
-			keys.push_back(SensorReading(1863, 1368, 1077, 553, 755, 747, "l"));
-			keys.push_back(SensorReading(974, 828, 1293, 555, 919, 810, "m"));
-			keys.push_back(SensorReading(910, 820, 1175, 580, 807, 776, "n"));
-			keys.push_back(SensorReading(1448, 881, 1194, 594, 1236, 688, "o"));
-			keys.push_back(SensorReading(1421, 1421, 1661, 628, 1976, 645, "p"));
-			keys.push_back(SensorReading(1660, 1107, 1145, 581, 878, 689, "q"));
-			keys.push_back(SensorReading(1072, 1073, 1499, 502, 913, 559, "r"));
-			keys.push_back(SensorReading(981, 853, 1185, 530, 790, 724, "s"));
-			keys.push_back(SensorReading(974, 876, 1162, 599, 760, 722, "t"));
-			keys.push_back(SensorReading(1082, 1309, 2040, 521, 821, 607, "u"));
-			keys.push_back(SensorReading(1117, 1444, 2073, 575, 941, 599, "v"));
-			keys.push_back(SensorReading(1126, 1455, 2073, 1238, 854, 504, "w"));
-			keys.push_back(SensorReading(984, 1036, 1111, 592, 881, 560, "x"));
-			keys.push_back(SensorReading(1854, 775, 1181, 612, 1827, 709, "y"));
-			keys.push_back(SensorReading(1151, 1427, 1249, 538, 915, 730, "z"));
+			
+			keys.push_back(SensorReading(1682, 773, 963, 481, 610, 751, "a"));
+			keys.push_back(SensorReading(1057, 1319, 2056, 1170, 1645, 810, "b"));
+			keys.push_back(SensorReading(1495, 855, 1151, 581, 1245, 731, "c"));
+			keys.push_back(SensorReading(1101, 1349, 1100, 505, 776, 668, "d"));
+			keys.push_back(SensorReading(947, 791, 1067, 493, 783, 701, "e"));
+			keys.push_back(SensorReading(1282, 1051, 2089, 1229, 1961, 745, "f"));
+			keys.push_back(SensorReading(1380, 1049, 1199, 538, 831, 739, "g"));
+			keys.push_back(SensorReading(1090, 1137, 1884, 545, 822, 731, "h"));
+			keys.push_back(SensorReading(1061, 834, 1129, 497, 1527, 786, "i"));
+			keys.push_back(SensorReading(1075, 825, 1180, 489, 1675, 715, "j"));
+			keys.push_back(SensorReading(1392, 1330, 1975, 567, 811, 777, "k"));
+			keys.push_back(SensorReading(1910, 1399, 1059, 558, 797, 685, "l"));
+			keys.push_back(SensorReading(996, 826, 1185, 1068, 1062, 905, "m"));
+			keys.push_back(SensorReading(1027, 836, 875, 589, 824, 697, "n"));
+			keys.push_back(SensorReading(1425, 926, 1203, 576, 1006, 689, "o"));
+			keys.push_back(SensorReading(1502, 1317, 1930, 606, 832, 735, "p"));
+			keys.push_back(SensorReading(1642, 1049, 1106, 552, 812, 745, "q"));
+			keys.push_back(SensorReading(1029, 1006, 1137, 475, 747, 614, "r"));
+			keys.push_back(SensorReading(994, 955, 1114, 566, 939, 714, "s"));
+			keys.push_back(SensorReading(997, 872, 1170, 538, 812, 718, "t"));
+			keys.push_back(SensorReading(1029, 1272, 1983, 495, 665, 611, "u"));
+			keys.push_back(SensorReading(1057, 1428, 2130, 518, 706, 666, "v"));
+			keys.push_back(SensorReading(1137, 1421, 2115, 1264, 788, 610, "w"));
+			keys.push_back(SensorReading(939, 1071, 1025, 574, 859, 640, "x"));
+			keys.push_back(SensorReading(1792, 776, 1146, 572, 1914, 767, "y"));
+			keys.push_back(SensorReading(911, 1335, 1129, 515, 797, 646, "z"));
 		}
 
 		std::string FlexSensorReader::Convert(const SensorReading* flex_reading) const{
