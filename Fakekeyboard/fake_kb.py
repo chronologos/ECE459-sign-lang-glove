@@ -87,7 +87,7 @@ class TestMode:
         # self.test = ["test\n" for i in range(0,10)]
 
     def runReader(self):
-        input("READY: press start!\n")
+        input("READY: press <enter>!\n")
         while (1):
             # print("read")
             # c = self.test.pop()
@@ -103,22 +103,20 @@ class TestMode:
                 if self.autocorrect_on:
                     actual_prime = spell(actual)
                     if actual_prime != actual:
-                        print("autocorrect corrected {0} to {1}".format(actual,actual_prime))
+                        print("Autocorrect corrected {0} to {1}".format(actual,actual_prime))
                         actual = actual_prime
 
 
                 self.buffer = ""
                 self.wrong=editDistDP(ideal, actual)
                 self.totalWrong += self.wrong
-                self.charLen = len(ideal)
-                if not len(ideal):
-                    self.charLen = 1 #TODO
+                self.charLen = max(len(ideal), self.wrong)
                 self.totalLen += self.charLen
                 print(
-                        "When signing {0}, {1} percent accuracy. Overall {2} percent accuracy for {3} chars signed".format(ideal,
+                        "When signing {0}, {1} percent accuracy. \n Overall {2} percent accuracy for {3} chars signed\n".format(ideal,
                             (1 - abs(self.wrong/self.charLen))*100, (1 - abs(self.totalWrong/self.totalLen))*100, self.totalLen))
                 self.done = True
-                input("press start!\n")
+                input("press <enter>!\n")
                 self.bt.reset_input_buffer()
             # if self.done:
             #     with open("results.txt", "w+") as f:
@@ -130,9 +128,9 @@ class TestMode:
 
 def sendKey(key):
     if key == "!": # bs
-        scpt = '''tell application \"System Events\" to keystroke space'''
-    elif key == "`": # space
         scpt = '''tell application \"System Events\" to key code 51'''
+    elif key == "`": # space
+        scpt = '''tell application \"System Events\" to keystroke space'''
     else:
         scpt = '''tell application \"System Events\" to keystroke \"''' + key + "\""
     scpt = scpt.encode('utf-8')
@@ -149,7 +147,7 @@ def run():
         return
     port = sys.argv[1]
     autocorrect = True if ("true" == sys.argv[2]) else False
-    print("autocorrect is {0}".format(str(autocorrect)))
+    print("autocorrect_on = {0}".format(str(autocorrect)))
     mode = sys.argv[3]
     if mode == "INPUT":
         t = InputMode(port, autocorrect)
